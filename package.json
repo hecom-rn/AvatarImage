@@ -1,0 +1,17 @@
+{
+  "name": "@hecom/image-avatar",
+  "version": "0.0.1",
+  "description": "Avatar Image Component",
+  "main": "dist/index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git@gitlab.com:hecom/image-avatar.git"
+  },
+  "author": "Xiaosong Gao",
+  "license": "MIT",
+  "peerDependencies": {
+    "@hecom/aliyun": "*",
+    "@hecom/image-default-head": "*"
+  }
+}
