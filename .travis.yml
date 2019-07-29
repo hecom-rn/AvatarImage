@@ -1,0 +1,20 @@
+language: node_js
+node_js:
+ - "10"
+os:
+ - linux
+
+stages:
+ - test
+ - name: deploy
+   if: tag =~ ^v
+
+jobs:
+  include:
+    - stage: test
+    - stage: deploy
+      deploy:
+        provider: npm
+        api_key: "$NPM_TOKEN"
+        on:
+          tags: true

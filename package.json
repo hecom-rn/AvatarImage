@@ -2,7 +2,7 @@
   "name": "@hecom/image-avatar",
   "version": "1.0.0",
   "description": "Avatar Image Component",
-  "main": "dist/index.js",
+  "main": "index.js",
   "scripts": {},
   "repository": {
     "type": "git",
