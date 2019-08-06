@@ -1,2 +1,9 @@
 node_modules
 .idea
+.gradle
+gradle/wrapper
+build
+*.iml
+local.properties
+*.jsx
+*.js
