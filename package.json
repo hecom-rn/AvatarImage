@@ -10,4 +10,9 @@
   },
   "author": "Xiaosong Gao",
   "license": "MIT",
+  "dependencies": {
+  },
+  "peerDependencies": {
+    "react-native": ">=0.33"
+  }
 }

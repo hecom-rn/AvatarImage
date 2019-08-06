@@ -1,5 +1,6 @@
 import React from 'react';
-import {Image, Text, View,} from 'react-native';
+import {Image, Text, View} from 'react-native';
+import AvatarGroup from './AvatarGroup';
 
 interface User {
     code: number
@@ -32,7 +33,7 @@ export default class AvatarImage extends React.PureComponent<Props> {
     };
 
     renderDefaultAvatar = () => {
-        const {user, size, colors} = this.props;
+        const {user, size, colors, style} = this.props;
         let text;
         if (/[\u4e00-\u9fa5]/.test(user.name)) {
             const matchs = user.name.match(/[\u4e00-\u9fa5]/g);
@@ -41,18 +42,18 @@ export default class AvatarImage extends React.PureComponent<Props> {
             text = user.name.charAt(0);
         }
         return (
-            <View style={{
+            <AvatarGroup style={[{
                 height: size,
                 width: size,
                 borderRadius: size / 2,
                 backgroundColor: colors[Number(user.code) % colors.length],
                 alignItems: 'center',
                 justifyContent: 'center',
-            }}>
+            }, style]}>
                 <Text style={{color: 'white', fontSize: size * 0.618}}>
                     {text || '?'}
                 </Text>
-            </View>
+            </AvatarGroup>
         );
     };
 

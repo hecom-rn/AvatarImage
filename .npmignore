@@ -1,4 +1,3 @@
-/src
-/.gitlab-ci.yml
-/.eslintrc.js
-/.babelrc
+/.travis.yml
+/.gitignore
+example
