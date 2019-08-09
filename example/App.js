@@ -7,128 +7,130 @@
  */
 
 import React, { Fragment } from 'react';
-import { Image, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { Colors, } from 'react-native/Libraries/NewAppScreen';
 import Avatar from '@hecom/image-avatar'
 
 const size = 88;
-const colors = ['#3EAAFF', '#47C2E7', '#FD6364', '#FDC63F', '#BEE15D', '#28D9C1', '#FF9D50'];
-let basicFontSize = 0;
-const renderItem = (user) => {
-    if (user.avatar) {
+
+class App extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {users: []};
+    }
+
+    componentDidMount() {
+        this.resetUser();
+    }
+
+    render() {
         return (
-            <Image source={{uri: user.avatar}} />
-        );
-    } else {
-        let text;
-        if (/[\u4e00-\u9fa5]/.test(user.name)) {
-            const matchs = user.name.match(/[\u4e00-\u9fa5]/g);
-            text = matchs[matchs.length - 1];
-        } else {
-            text = user.name.charAt(0);
-        }
-        return (
-            <View
-                style={[{
-                    backgroundColor: colors[Number(user.code) % colors.length],
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                }]}
-            >
-                <Text style={{color: 'white', fontSize: size * 0.618}}>
-                    {text || '?'}
-                </Text>
-            </View>
+            <Fragment>
+                <StatusBar barStyle="dark-content" />
+                <SafeAreaView>
+                    <ScrollView
+                        contentInsetAdjustmentBehavior="automatic"
+                        style={styles.scrollView}>
+                        <Text style={styles.label}>
+                            {'默认头像'}
+                        </Text>
+                        <View style={styles.container}>
+                            <Avatar
+                                style={[styles.avatar]}
+                                size={size}
+                                users={[{code: 1, name: '白宇东'}]}
+                            />
+                            <Avatar
+                                style={styles.avatar}
+                                size={size}
+                                users={[{code: 2, name: 'abc'}]}
+                            />
+                        </View>
+                        <Text style={styles.label}>
+                            {'图片头像'}
+                        </Text>
+                        <View style={styles.container}>
+                            <Avatar
+                                style={styles.avatar}
+                                size={size}
+                                users={[{
+                                    code: 3,
+                                    name: '白宇东',
+                                    avatar: 'https://paas-migration-attachments.oss-cn-beijing.aliyuncs.com/filemanage/photoFiles/2019/8/v1907/c239/c239_20190802165955255.jpg'
+                                }]}
+                            />
+                        </View>
+                        <Text style={styles.label}>
+                            {'群头像'}
+                        </Text>
+                        <View style={styles.container}>
+                            <Avatar
+                                style={styles.avatar}
+                                size={size}
+                                users={[{code: 4, name: '白宇东'}, {
+                                    code: 3,
+                                    name: '白宇东',
+                                    avatar: 'https://paas-migration-attachments.oss-cn-beijing.aliyuncs.com/filemanage/photoFiles/2019/8/v1907/c239/c239_20190802165955255.jpg'
+                                }]}
+                            />
+                            <Avatar
+                                style={styles.avatar}
+                                size={size}
+                                users={[{code: 5, name: '白宇东'}, {
+                                    code: 3,
+                                    name: '白宇东',
+                                    avatar: 'https://paas-migration-attachments.oss-cn-beijing.aliyuncs.com/filemanage/photoFiles/2019/8/v1907/c239/c239_20190802165955255.jpg'
+                                }, {code: 7, name: '白宇东'}]}
+                            />
+                            <Avatar
+                                style={styles.avatar}
+                                size={size}
+                                users={[{code: 6, name: '白宇东'}, {
+                                    code: 3,
+                                    name: '白宇东',
+                                    avatar: 'https://paas-migration-attachments.oss-cn-beijing.aliyuncs.com/filemanage/photoFiles/2019/8/v1907/c239/c239_20190802165955255.jpg'
+                                }, {code: 8, name: '白宇西'}, {code: 9, name: 'ccc'}, {code: 10, name: 'ddd'}, {
+                                    code: 11,
+                                    name: 'eee'
+                                }]}
+                            />
+                        </View>
+                        <Text style={styles.label}>
+                            {'动态添加'}
+                        </Text>
+                        <View style={styles.container}>
+                            <Avatar
+                                style={styles.avatar}
+                                size={size}
+                                users={this.state.users}
+                            />
+                        </View>
+                        <View style={{flexDirection: 'row'}}>
+                            <TouchableOpacity style={styles.button} onPress={this.addUser}>
+                                <Text>
+                                    {'添加一个User'}
+                                </Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.button} onPress={this.resetUser}>
+                                <Text>
+                                    {'重置User'}
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                    </ScrollView>
+                </SafeAreaView>
+            </Fragment>
         );
     }
-};
 
-const App = () => {
-    return (
-        <Fragment>
-            <StatusBar barStyle="dark-content" />
-            <SafeAreaView>
-                <ScrollView
-                    contentInsetAdjustmentBehavior="automatic"
-                    style={styles.scrollView}>
-                    <Text style={styles.label}>
-                        {'默认头像'}
-                    </Text>
-                    <View style={styles.container}>
-                        <Avatar
-                            style={[styles.avatar]}
-                            size={size}
-                            renderAvatar={renderItem}
-                            users={[{code: 1, name: '白宇东'}]}
-                        />
-                        <Avatar
-                            style={styles.avatar}
-                            size={size}
-                            renderAvatar={renderItem}
-                            users={[{code: 2, name: 'abc'}]}
-                        />
-                    </View>
-                    <Text style={styles.label}>
-                        {'图片头像'}
-                    </Text>
-                    <View style={styles.container}>
-                        <Avatar
-                            style={styles.avatar}
-                            size={size}
-                            renderAvatar={renderItem}
-                            users={[{
-                                code: 3,
-                                name: '白宇东',
-                                avatar: 'https://paas-migration-attachments.oss-cn-beijing.aliyuncs.com/filemanage/photoFiles/2019/8/v1907/c239/c239_20190802165955255.jpg'
-                            }]}
-                        />
-                    </View>
-                    <Text style={styles.label}>
-                        {'群头像'}
-                    </Text>
-                    <View style={styles.container}>
-                        <Avatar
-                            style={styles.avatar}
-                            size={size}
-                            renderAvatar={renderItem}
-                            numberOfSides={5}
-                            users={[{code: 4, name: '白宇东'}, {
-                                code: 3,
-                                name: '白宇东',
-                                avatar: 'https://paas-migration-attachments.oss-cn-beijing.aliyuncs.com/filemanage/photoFiles/2019/8/v1907/c239/c239_20190802165955255.jpg'
-                            }]}
-                        />
-                        <Avatar
-                            style={styles.avatar}
-                            size={size}
-                            renderAvatar={renderItem}
-                            numberOfSides={7}
-                            users={[{code: 5, name: '白宇东'}, {
-                                code: 3,
-                                name: '白宇东',
-                                avatar: 'https://paas-migration-attachments.oss-cn-beijing.aliyuncs.com/filemanage/photoFiles/2019/8/v1907/c239/c239_20190802165955255.jpg'
-                            }, {code: 7, name: '白宇东'}]}
-                        />
-                        <Avatar
-                            style={styles.avatar}
-                            size={size}
-                            renderAvatar={renderItem}
-                            users={[{code: 6, name: '白宇东'}, {
-                                code: 3,
-                                name: '白宇东',
-                                avatar: 'https://paas-migration-attachments.oss-cn-beijing.aliyuncs.com/filemanage/photoFiles/2019/8/v1907/c239/c239_20190802165955255.jpg'
-                            }, {code: 8, name: '白宇西'}, {code: 9, name: 'ccc'}, {code: 10, name: 'ddd'}, {
-                                code: 11,
-                                name: 'eee'
-                            }]}
-                        />
-                    </View>
-                </ScrollView>
-            </SafeAreaView>
-        </Fragment>
-    );
-};
+    addUser = () => {
+        this.setState({users: [...this.state.users, {name: 'aaa', code: 8}]})
+    }
+    resetUser = () => {
+        this.setState({users: [{name: 'aaa', code: 8}]})
+    }
+}
 
 const styles = StyleSheet.create({
     scrollView: {
@@ -145,7 +147,8 @@ const styles = StyleSheet.create({
         marginTop: 16,
         marginLeft: 16
     },
-    avatar: {marginHorizontal: 8}
+    avatar: {marginHorizontal: 8},
+    button: {height: 48, justifyContent: 'center', alignItems: 'center', flex: 1}
 });
 
 export default App;
