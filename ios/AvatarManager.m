@@ -1,19 +1,19 @@
 //
-//  RNViewManager.m
+//  AvatarManager.m
 //  CRMPro
 //
 //  Created by ms on 2019/7/31.
 //
 
-#import "RNViewManager.h"
+#import "AvatarManager.h"
 #import "HexagonsView.h"
 #import <Foundation/Foundation.h>
 
-@interface RNViewManager()
+@interface AvatarManager()
 
 @end
 
-@implementation RNViewManager
+@implementation AvatarManager
 
 RCT_EXPORT_VIEW_PROPERTY(param, NSDictionary)
 
