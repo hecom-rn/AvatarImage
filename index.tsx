@@ -1,5 +1,5 @@
 import React from 'react';
-import {Image, Text, View} from 'react-native';
+import { Image, Text, View, Platform, processColor } from 'react-native';
 import AvatarGroup from './AvatarGroup';
 
 interface User {
@@ -34,6 +34,21 @@ export default class AvatarImage extends React.PureComponent<Props> {
         return url;
     };
 
+    getUserText = (user) => {
+        let text;
+        if (/[\u4e00-\u9fa5]/.test(user.name)) {
+            const matchs = user.name.match(/[\u4e00-\u9fa5]/g);
+            text = matchs[matchs.length - 1];
+        } else {
+            text = user.name.charAt(0).toUpperCase();
+        }
+        return text || '?';
+    }
+
+    getFillColor = (user) => {
+        return colors[Number(user.code) % colors.length];
+    }    
+
     renderDefaultAvatar = (user) => {
         const {users, size, colors, getThumbUrl = this.getThumbUrl} = this.props;
         if (user.avatar) {
@@ -64,7 +79,23 @@ export default class AvatarImage extends React.PureComponent<Props> {
 
     render() {
         const {users = [], size, style, renderAvatar = this.renderDefaultAvatar} = this.props;
-        return (
+        const isIOS = Platform.OS === 'ios';
+
+        return isIOS ? (
+            <AvatarGroup 
+                users={
+                    users.map(user => {
+                        return {
+                            name: this.getUserText(user), 
+                            color: processColor(this.getFillColor(user)), 
+                            url: this.getThumbUrl(user.avatar)})};
+                        }
+                    )
+                }
+                sideLength={size/2}   
+                style={[style]}
+            />
+        ) : (
             <AvatarGroup {...this.props} style={[{width: size, height: size}, style]}>
                 {users.map(user => renderAvatar(user))}
             </AvatarGroup>

@@ -1,12 +1,12 @@
 import React from 'react';
-import { requireNativeComponent, processColor, Platform } from 'react-native';
+import { requireNativeComponent, Platform } from 'react-native';
 
 export default class AvatarGroup extends React.Component {
     render() {
         const isIOS = Platform.OS === 'ios';
         if (isIOS) {
-            const {style, fillColor, ...other} = this.props;
-            return <NativeAvatarGroup style={style} param={{fillColor: processColor(fillColor) , ...other}} />;
+            const {style, ...other} = this.props;
+            return <NativeAvatarGroup style={style} param={{...other}} />;
         } else {
             return <NativeAvatarGroup {...this.props} />
         }
