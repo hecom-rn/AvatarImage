@@ -6,11 +6,10 @@ export default class AvatarGroup extends React.Component {
         const isIOS = Platform.OS === 'ios';
         if (isIOS) {
             const {style, fillColor, ...other} = this.props;
-            return <HEXView style={style} param={{fillColor: processColor(fillColor) , ...other}} />;
+            return <NativeAvatarGroup style={style} param={{fillColor: processColor(fillColor) , ...other}} />;
         } else {
             return <NativeAvatarGroup {...this.props} />
         }
     }
 }
-const HEXView = requireNativeComponent('Avatar', AvatarGroup);
 const NativeAvatarGroup = requireNativeComponent('Avatar', AvatarGroup);
