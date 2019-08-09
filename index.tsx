@@ -9,6 +9,7 @@ export interface User {
 }
 
 export interface Props {
+    user: User,
     users: User[],
     size: number,
     colors: string[],
@@ -137,10 +138,13 @@ export default class AvatarImage extends React.PureComponent<Props> {
     }
 
     render() {
-        const {users = [], size, style, colors, renderAvatar = this.renderDefaultAvatar} = this.props;
+        const {users = [], user, size, style, colors, renderAvatar = this.renderDefaultAvatar} = this.props;
         const isIOS = Platform.OS === 'ios';
         if (users.length > 4) {
             users.length = 4;
+        }
+        if (users.length === 0) {
+            users.push(user)
         }
         return isIOS ? (
             <AvatarGroup
