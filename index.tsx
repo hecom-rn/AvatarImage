@@ -22,7 +22,7 @@ export default class AvatarImage extends React.PureComponent<Props> {
         colors: ['#3EAAFF', '#47C2E7', '#FD6364', '#FDC63F', '#BEE15D', '#28D9C1', '#FF9D50'],
         size: 48,
         radius: 6,
-        numberOfSides: 6
+        users:[],
     };
 
     constructor(props) {
@@ -138,12 +138,12 @@ export default class AvatarImage extends React.PureComponent<Props> {
     }
 
     render() {
-        const {users = [], user, size, style, colors, renderAvatar = this.renderDefaultAvatar} = this.props;
+        const {users, user, size, style, colors, renderAvatar = this.renderDefaultAvatar} = this.props;
         const isIOS = Platform.OS === 'ios';
         if (users.length > 4) {
             users.length = 4;
         }
-        if (users.length === 0) {
+        if (users.length === 0 && user) {
             users.push(user)
         }
         return isIOS ? (
