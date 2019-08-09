@@ -1,6 +1,5 @@
 import React from 'react';
-import {Platform} 'react-native';
-import {requireNativeComponent, processColor} from 'react-native';
+import { requireNativeComponent, processColor, Platform } from 'react-native';
 
 export default class AvatarGroup extends React.Component {
     render() {
