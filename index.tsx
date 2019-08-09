@@ -22,11 +22,29 @@ export default class AvatarImage extends React.PureComponent<Props> {
         colors: ['#3EAAFF', '#47C2E7', '#FD6364', '#FDC63F', '#BEE15D', '#28D9C1', '#FF9D50'],
         size: 48,
         radius: 6,
-        users:[],
+        users: [],
     };
+
+    static getDerivedStateFromProps(nextProp) {
+        return AvatarImage.convertProp(nextProp);
+    }
+
+    static convertProp({users, user}) {
+        let stateUsers;
+        if (users.length === 0 && user) {
+            stateUsers = [user];
+        } else if (users.length > 4) {
+            stateUsers = [...users];
+            stateUsers.length = 4;
+        } else {
+            stateUsers = users;
+        }
+        return {users: stateUsers};
+    }
 
     constructor(props) {
         super(props);
+        this.state = AvatarImage.convertProp(props)
     }
 
     getThumbUrl = (url) => {
