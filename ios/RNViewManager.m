@@ -17,7 +17,7 @@
 
 RCT_EXPORT_VIEW_PROPERTY(param, NSDictionary)
 
-RCT_EXPORT_MODULE(RNViewManager)
+RCT_EXPORT_MODULE(AvatartManager)
 
 
 - (UIView *)view

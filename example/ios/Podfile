@@ -27,6 +27,7 @@ target 'example' do
   pod 'DoubleConversion', :podspec => '../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec'
   pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
+  pod 'hecom-rn-avatarImage', :podspec => '../node_modules/@hecom/image-avatar/hecom-rn-avatarImage.podspec'
 
   target 'exampleTests' do
     inherit! :search_paths

@@ -3,7 +3,7 @@ require 'json'
 package = JSON.parse(File.read(File.join(__dir__, 'package.json')))
 
 Pod::Spec.new do |s|
-  s.name         = 'hecom-rn-avatar-image'
+  s.name         = 'hecom-rn-avatarImage'
   s.version      = package['version']
   s.summary      = package['description']
   s.authors      = { "VampireGod" => "mashuai_hy@163.com" }

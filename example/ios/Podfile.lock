@@ -11,6 +11,8 @@ PODS:
     - DoubleConversion
     - glog
   - glog (0.3.5)
+  - hecom-rn-avatarImage (2.0.0):
+    - React
   - React (0.60.4):
     - React-Core (= 0.60.4)
     - React-DevSupport (= 0.60.4)
@@ -87,6 +89,7 @@ DEPENDENCIES:
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - Folly (from `../node_modules/react-native/third-party-podspecs/Folly.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
+  - "hecom-rn-avatarImage (from `../node_modules/@hecom/image-avatar/hecom-rn-avatarImage.podspec`)"
   - React (from `../node_modules/react-native/`)
   - React-Core (from `../node_modules/react-native/React`)
   - React-cxxreact (from `../node_modules/react-native/ReactCommon/cxxreact`)
@@ -118,6 +121,8 @@ EXTERNAL SOURCES:
     :podspec: "../node_modules/react-native/third-party-podspecs/Folly.podspec"
   glog:
     :podspec: "../node_modules/react-native/third-party-podspecs/glog.podspec"
+  hecom-rn-avatarImage:
+    :podspec: "../node_modules/@hecom/image-avatar/hecom-rn-avatarImage.podspec"
   React:
     :path: "../node_modules/react-native/"
   React-Core:
@@ -157,11 +162,17 @@ EXTERNAL SOURCES:
   yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
+CHECKOUT OPTIONS:
+  hecom-rn-avatarImage:
+    :commit: f3fc7e9a08100d9a8b05aaf8a030c798b26e6e61
+    :git: https://github.com/hecom-rn/AvatarImage.git
+
 SPEC CHECKSUMS:
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   DoubleConversion: 5805e889d232975c086db112ece9ed034df7a0b2
   Folly: 30e7936e1c45c08d884aa59369ed951a8e68cf51
   glog: 1f3da668190260b06b429bb211bfbee5cd790c28
+  hecom-rn-avatarImage: f14b1f0628ca27de83dbb44f374acb7fe7eadf7b
   React: c438ccc7e14e86d4702bb92d7e262f549ffaa995
   React-Core: c76495f5c14e73c0f803b89c3fa83f804da61bd6
   React-cxxreact: f64bc64cf4682d6ea5a064f6017da72482858682
@@ -182,6 +193,6 @@ SPEC CHECKSUMS:
   React-RCTWebSocket: f32b93e0953d7c07fd5dd45305406282cfdc95cf
   yoga: 88c514f310aff89b94a14c5fbf44b95735af0cb7
 
-PODFILE CHECKSUM: e6321daab2a139195c1bcaad4b674c568140b44a
+PODFILE CHECKSUM: 25982a0d2f568ef3801f921aa522fa286e783ca6
 
 COCOAPODS: 1.5.3
