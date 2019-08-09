@@ -67,7 +67,8 @@ export default class AvatarImage extends React.PureComponent<Props> {
     };
 
     renderDefaultAvatar = (user, index) => {
-        const {users, size, colors, getThumbUrl = this.getThumbUrl} = this.props;
+        const {size, colors, getThumbUrl = this.getThumbUrl} = this.props;
+        const {users} = this.state;
         if (user.avatar) {
             return (
                 <Image style={this.getTextStyle(size, users.length, index)} source={{uri: getThumbUrl(user.avatar)}} />
@@ -156,14 +157,9 @@ export default class AvatarImage extends React.PureComponent<Props> {
     }
 
     render() {
-        const {users, user, size, style, colors, renderAvatar = this.renderDefaultAvatar} = this.props;
+        const {size, style, colors, renderAvatar = this.renderDefaultAvatar} = this.props;
+        const {users} = this.state;
         const isIOS = Platform.OS === 'ios';
-        if (users.length > 4) {
-            users.length = 4;
-        }
-        if (users.length === 0 && user) {
-            users.push(user)
-        }
         return isIOS ? (
             <AvatarGroup
                 users={
