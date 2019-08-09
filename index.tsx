@@ -88,9 +88,9 @@ export default class AvatarImage extends React.PureComponent<Props> {
                         return {
                             name: this.getUserText(user), 
                             color: processColor(this.getFillColor(user)), 
-                            url: this.getThumbUrl(user.avatar)})};
+                            url: this.getThumbUrl(user.avatar)
                         }
-                    )
+                    })
                 }
                 sideLength={size/2}   
                 style={[style]}
