@@ -9,11 +9,37 @@ export interface User {
 }
 
 export interface Props {
+    /**
+     * 员工，如果users有值则无效
+     */
     user: User,
+    /**
+     * 群头像员工列表，优先于user属性
+     */
     users: User[],
+    /**
+     * 视图大小，正六边形的直径
+     */
     size: number,
+    /**
+     * 分隔线宽度
+     */
+    sepWidth: number,
+    /**
+     * 默认头像背景色
+     */
     colors: string[],
+    /**
+     * 自定义头像绘制方法
+     * @param {User} user
+     * @returns {React.Element}
+     */
     renderAvatar: (user: User) => React.Element;
+    /**
+     * 缩略图
+     * @param {string} url
+     * @returns {string}
+     */
     getThumbUrl: (url: string) => string;
 }
 
@@ -21,7 +47,8 @@ export default class AvatarImage extends React.PureComponent<Props> {
     static defaultProps = {
         colors: ['#3EAAFF', '#47C2E7', '#FD6364', '#FDC63F', '#BEE15D', '#28D9C1', '#FF9D50'],
         size: 48,
-        radius: 6,
+        radius: 2,
+        sepWidth: 1,
         users: [],
     };
 
@@ -71,7 +98,7 @@ export default class AvatarImage extends React.PureComponent<Props> {
         const {users} = this.state;
         if (user.avatar) {
             return (
-                <Image style={this.getTextStyle(size, users.length, index)} source={{uri: getThumbUrl(user.avatar)}} />
+                <Image style={AvatarImage.getTextStyle(size, users.length, index)} source={{uri: getThumbUrl(user.avatar)}} />
             );
         } else {
             return (
@@ -80,19 +107,21 @@ export default class AvatarImage extends React.PureComponent<Props> {
                     backgroundColor: colors[Number(user.code) % colors.length],
                     textAlign: 'center',
                     textAlignVertical: 'center',
-                }, this.getTextStyle(size, users.length, index)]}>
+                }, AvatarImage.getTextStyle(size, users.length, index)]}>
                     {this.getUserText(user)}
                 </Text>
             );
         }
     };
 
-    getTextStyle(size, count, index) {
-        let fontSize, paddingLeft, paddingRight, paddingTop, paddingBottom, width, height, top, left, right, bottom,
-            position = 'absolute';
+    static getTextStyle(size, count, index) {
+        let fontSize, paddingLeft = 0, paddingRight = 0, paddingTop = 0, paddingBottom = 0, width, height, top, left,
+            right, bottom, fontWeight, position = 'absolute';
         const padding = size / 2 * (1 - Math.sin(Math.PI * 2 / 6));
         if (count === 1) {
             fontSize = size * 0.4;
+            width = size;
+            height = size;
         } else if (count === 2) {
             fontSize = size * 0.3;
             width = size / 2;
@@ -105,7 +134,8 @@ export default class AvatarImage extends React.PureComponent<Props> {
                 right = 0;
             }
         } else if (count === 3) {
-            fontSize = size * 0.2;
+            fontWeight = 'bold';
+            fontSize = size * 10 / 48;
             if (index === 0) {
                 width = size / 2;
                 height = size * 0.75;
@@ -122,7 +152,8 @@ export default class AvatarImage extends React.PureComponent<Props> {
                 bottom = 0;
             }
         } else {
-            fontSize = size * 0.15;
+            fontWeight = 'bold';
+            fontSize = size * 10 / 48;
             width = size / 2;
             height = size / 2;
             if (index % 2 === 0) {
@@ -142,6 +173,7 @@ export default class AvatarImage extends React.PureComponent<Props> {
         }
         return {
             position,
+            fontWeight,
             fontSize,
             paddingRight,
             paddingLeft,
