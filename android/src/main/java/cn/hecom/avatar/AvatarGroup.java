@@ -9,16 +9,17 @@ import android.graphics.Path;
 import android.support.annotation.NonNull;
 import android.view.View;
 
-import com.github.florent37.shapeofview.ShapeOfView;
-import com.github.florent37.shapeofview.manager.ClipPathManager;
+import com.facebook.react.views.view.ReactViewGroup;
 
-public class AvatarGroup extends ShapeOfView {
+public class AvatarGroup extends ReactViewGroup {
 
     private int numberOfSides = 6;
-    private int radius = 6;
+    private int radius = 2;
     private int width;
     private int height;
-    private Paint sepPaint;
+    private boolean needUpdatePath = true;
+    private Paint sepPaint = new Paint();
+    private Path clipPath = new Path();
 
     public AvatarGroup(@NonNull Context context) {
         super(context);
@@ -26,39 +27,33 @@ public class AvatarGroup extends ShapeOfView {
     }
 
     private void init() {
-        sepPaint = new Paint();
         sepPaint.setColor(Color.WHITE);
-        sepPaint.setStrokeWidth(radius);
-        super.setClipPathCreator(new ClipPathManager.ClipPathCreator() {
-            @Override
-            public Path createClipPath(int width, int height) {
+    }
 
-                final float section = (float) (2.0 * Math.PI / numberOfSides);
-                final int polygonSize = Math.min(width, height);
-                final int radius = polygonSize / 2;
-                final int centerX = width / 2;
-                final int centerY = height / 2;
+    protected float dpToPx(float dp) {
+        return dp * this.getContext().getResources().getDisplayMetrics().density;
+    }
 
-                final Path polygonPath = new Path();
-                polygonPath.moveTo((centerX + radius * (float) Math.cos(0)), (centerY + radius * (float) Math.sin(0)));
+    private void calculatePath() {
+        final float section = (float) (2.0 * Math.PI / numberOfSides);
+        final int polygonSize = Math.min(width, height);
+        final int radius = polygonSize / 2;
+        final int centerX = width / 2;
+        final int centerY = height / 2;
 
-                for (int i = 1; i < numberOfSides; i++) {
-                    polygonPath.lineTo((centerX + radius * (float) Math.cos(section * i)),
-                            (centerY + radius * (float) Math.sin(section * i)));
-                }
+        clipPath.reset();
+        clipPath.moveTo((centerX + radius * (float) Math.cos(0)), (centerY + radius * (float) Math.sin(0)));
 
-                polygonPath.close();
-                Matrix matrix = new Matrix();
-                matrix.postRotate(90, centerX, centerY);
-                polygonPath.transform(matrix);
-                return polygonPath;
-            }
+        for (int i = 1; i < numberOfSides; i++) {
+            clipPath.lineTo((centerX + radius * (float) Math.cos(section * i)),
+                    (centerY + radius * (float) Math.sin(section * i)));
+        }
 
-            @Override
-            public boolean requiresBitmap() {
-                return true;
-            }
-        });
+        clipPath.close();
+        Matrix matrix = new Matrix();
+        matrix.postRotate(90, centerX, centerY);
+        clipPath.transform(matrix);
+        postInvalidate();
     }
 
     @Override
@@ -66,49 +61,6 @@ public class AvatarGroup extends ShapeOfView {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         width = MeasureSpec.getSize(widthMeasureSpec);
         height = MeasureSpec.getSize(heightMeasureSpec);
-        int count = getChildCount();
-        if (count == 2) {
-            measureChildren(MeasureSpec.makeMeasureSpec(width / 2, MeasureSpec.EXACTLY), heightMeasureSpec);
-        } else if (count == 3) {
-            measureChild(getChildAt(0), MeasureSpec.makeMeasureSpec(width / 2, MeasureSpec.EXACTLY),
-                    MeasureSpec.makeMeasureSpec(height - getSubHeight(width, height), MeasureSpec.EXACTLY));
-            measureChild(getChildAt(1), MeasureSpec.makeMeasureSpec(width / 2, MeasureSpec.EXACTLY),
-                    MeasureSpec.makeMeasureSpec(height - getSubHeight(width, height), MeasureSpec.EXACTLY));
-            measureChild(getChildAt(2), widthMeasureSpec,
-                    MeasureSpec.makeMeasureSpec(height / 2, MeasureSpec.EXACTLY));
-        } else if (count == 4) {
-            measureChildren(MeasureSpec.makeMeasureSpec(width / 2, MeasureSpec.EXACTLY), MeasureSpec
-                    .makeMeasureSpec(height / 2, MeasureSpec.EXACTLY));
-        }
-    }
-
-    private int getSubHeight(int width, int height) {
-        final float section = (float) (2.0 * Math.PI / numberOfSides);
-        final int radius = Math.min(width, height) / 2;
-        return (int) (radius - Math.cos(section) * radius);
-    }
-
-    @Override
-    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        int childrenCount = getChildCount();
-        if (childrenCount == 2) {
-            getChildAt(0).layout(0, 0, width / 2, height);
-            getChildAt(1).layout(width / 2, 0, width, height);
-        } else if (childrenCount == 3) {
-            getChildAt(0).layout(0, 0, width / 2, height - getSubHeight(width, height));
-            getChildAt(1).layout(width / 2, 0, width, height - getSubHeight(width, height));
-            getChildAt(2).layout(0, height / 2, width, height);
-        } else if (childrenCount == 4) {
-            getChildAt(0).layout(0, 0, width / 2, height / 2);
-            getChildAt(1).layout(width / 2, 0, width, height / 2);
-            getChildAt(2).layout(0, height / 2, width / 2, height);
-            getChildAt(3).layout(width / 2, height / 2, width, height);
-        } else {
-            super.onLayout(changed, left, top, right, bottom);
-        }
-        if (changed) {
-            requiresShapeUpdate();
-        }
     }
 
     @Override
@@ -131,15 +83,23 @@ public class AvatarGroup extends ShapeOfView {
         }
         boolean result = super.drawChild(canvas, child, drawingTime);
         if (needProcess) {
-
             canvas.restore();
         }
         return result;
     }
 
     @Override
-    public void draw(Canvas canvas) {
-        super.draw(canvas);
+    public void dispatchDraw(Canvas canvas) {
+        if (needUpdatePath) {
+            calculatePath();
+            needUpdatePath = false;
+        }
+        canvas.clipPath(clipPath);
+        super.dispatchDraw(canvas);
+        drawSep(canvas);
+    }
+
+    private void drawSep(Canvas canvas) {
         int count = getChildCount();
         final int centerX = width / 2;
         final int centerY = height / 2;
@@ -167,10 +127,21 @@ public class AvatarGroup extends ShapeOfView {
 
     public void setNoOfSides(int numberOfSides) {
         this.numberOfSides = numberOfSides;
-        requiresShapeUpdate();
+        updatePath();
     }
 
     void setRadius(int radius) {
         this.radius = radius;
+        updatePath();
+    }
+
+    void setSepWidth(int width) {
+        sepPaint.setStrokeWidth(dpToPx(width));
+        updatePath();
+    }
+
+    private void updatePath() {
+        this.needUpdatePath = true;
+        postInvalidate();
     }
 }
