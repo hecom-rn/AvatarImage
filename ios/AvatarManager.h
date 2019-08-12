@@ -1,6 +1,6 @@
 //
 //  AvatarManager.h
-//  CRMPro
+//  
 //
 //  Created by ms on 2019/7/31.
 //

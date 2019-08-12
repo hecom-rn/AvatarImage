@@ -1,13 +1,13 @@
 //
 //  HexagonsView.h
-//  IOSOPenFileHeapler
+//  
 //
 //  Created by ms on 2019/8/1.
 //
 
-#import <UIKit/UIKit.h>
+#import <React/RCTView.h>
 
-@interface HexagonsView : UIView
+@interface HexagonsView : RCTView
 
 @end
 

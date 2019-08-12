@@ -1,85 +1,128 @@
 //
 //  HexagonsView.m
-//  IOSOPenFileHeapler
+//  
 //
 //  Created by ms on 2019/8/1.
 //
 
 #import "HexagonsView.h"
-#import "HexagonsLayer.h"
 #import <React/RCTConvert.h>
-#import "HexagonsModel.h"
 
-@implementation HexagonsView
-
-- (void)setParam:(NSDictionary *)param {
-  NSNumber *sideLength = [param objectForKey:@"sideLength"];
-  NSArray *users = [param objectForKey:@"users"];
-  HexagonsModel *model = [[HexagonsModel alloc] init];
-  model.lineWidth = 3;
-  model.sideLength = sideLength.floatValue;
-  
-  if (users == nil) return;
-  switch (users.count) {
-    case 0:
-      break;
-    case 1:
-        model.name = [users[0] objectForKey:@"name"];
-        model.url = [users[0] objectForKey:@"url"];
-        model.color = [RCTConvert UIColor:[users[0] objectForKey:@"color"]]; 
-        [self.layer addSublayer:[HexagonsLayer layerWithModel:model]];
-      break;
-    case 2:
-        model.name = [users[0] objectForKey:@"name"];
-        model.url = [users[0] objectForKey:@"url"];
-        model.color = [RCTConvert UIColor:[users[0] objectForKey:@"color"]]; 
-        [self.layer addSublayer:[HexagonsLayer leftLayerWithModel: model]];
-
-        model.name = [users[1] objectForKey:@"name"];
-        model.url = [users[1] objectForKey:@"url"];
-        model.color = [RCTConvert UIColor:[users[1] objectForKey:@"color"]];
-        [self.layer addSublayer:[HexagonsLayer RightLayerWithModel:model]];
-      break;
-    case 3:
-        model.name = [users[0] objectForKey:@"name"];
-        model.url = [users[0] objectForKey:@"url"];
-        model.color = [RCTConvert UIColor:[users[0] objectForKey:@"color"]];
-        [self.layer addSublayer:[HexagonsLayer leftMiddleLayerWithModel:model]];
-      
-        model.name = [users[1] objectForKey:@"name"];
-        model.url = [users[1] objectForKey:@"url"];
-        model.color = [RCTConvert UIColor:[users[1] objectForKey:@"color"]];
-        [self.layer addSublayer:[HexagonsLayer rightMiddleLayerWithModel:model]];
-      
-        model.name = [users[2] objectForKey:@"name"];
-        model.url = [users[2] objectForKey:@"url"];
-        model.color = [RCTConvert UIColor:[users[2] objectForKey:@"color"]];
-        [self.layer addSublayer:[HexagonsLayer bottomMiddleLayerWithModel:model]];
-      
-      
-      break;
-    default:
-        model.name = [users[0] objectForKey:@"name"];
-        model.url = [users[0] objectForKey:@"url"];
-        model.color = [RCTConvert UIColor:[users[0] objectForKey:@"color"]];
-        [self.layer addSublayer:[HexagonsLayer leftTopLayerWithModel:model]];
-      
-        model.name = [users[1] objectForKey:@"name"];
-        model.url = [users[1] objectForKey:@"url"];
-        model.color = [RCTConvert UIColor:[users[1] objectForKey:@"color"]];
-        [self.layer addSublayer:[HexagonsLayer rightTopLayerWithModel:model]];
-      
-        model.name = [users[2] objectForKey:@"name"];
-        model.url = [users[2] objectForKey:@"url"];
-        model.color = [RCTConvert UIColor:[users[2] objectForKey:@"color"]];
-        [self.layer addSublayer:[HexagonsLayer leftBottomLayerWithModel:model]];
-      
-        model.name = [users[3] objectForKey:@"name"];
-        model.url = [users[3] objectForKey:@"url"];
-        model.color = [RCTConvert UIColor:[users[4] objectForKey:@"color"]];
-        [self.layer addSublayer:[HexagonsLayer rightBottomLayerWithModel:model]];
-      break;
-  }
-  
+@implementation HexagonsView {
+    NSInteger _size;
+    NSInteger _sepWidth;
 }
+
+- (void)setSize:(NSInteger)size {
+    _size = size;
+}
+
+- (void)setSepWidth:(NSInteger)sepWidth {
+    _sepWidth = sepWidth;
+}
+
+- (void)displayLayer:(CALayer *)layer {
+    
+    // clip content
+    float sideLength = _size/2;
+    CGFloat utilAngle = M_PI / 3;
+    float xOffset = sideLength;
+    float yOffset = sideLength;
+    UIBezierPath *path = [UIBezierPath bezierPath];
+    [path moveToPoint:CGPointMake(cos(utilAngle * 1.5) * sideLength + xOffset, sin(utilAngle * 1.5) * sideLength + yOffset)];
+    [path addLineToPoint:CGPointMake(cos(utilAngle * 2.5) * sideLength + xOffset, sin(utilAngle * 2.5) * sideLength + yOffset)];
+    [path addLineToPoint:CGPointMake(cos(utilAngle * 3.5) * sideLength + xOffset, sin(utilAngle * 3.5) * sideLength + yOffset)];
+    [path addLineToPoint:CGPointMake(cos(utilAngle * 4.5) * sideLength + xOffset, sin(utilAngle * 4.5) * sideLength + yOffset)];
+    [path addLineToPoint:CGPointMake(cos(utilAngle * 5.5) * sideLength + xOffset, sin(utilAngle * 5.5) * sideLength + yOffset)];
+    [path addLineToPoint:CGPointMake(cos(utilAngle * 0.5) * sideLength + xOffset, sin(utilAngle * 0.5) * sideLength + yOffset)];
+    
+    CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
+    maskLayer.path = path.CGPath;
+    layer.mask  = maskLayer;
+    layer.masksToBounds = YES;
+    
+    // clip when subViews count equal to 3
+    if (layer.sublayers.count == 3) {
+        yOffset = 0;
+        CALayer *tempLayer = layer.sublayers[2];
+        UIBezierPath *path = [UIBezierPath bezierPath];
+        [path moveToPoint:CGPointMake(cos(utilAngle * 1.5) * sideLength + xOffset, yOffset)];
+        [path addLineToPoint:CGPointMake(cos(utilAngle * 0.5) * sideLength + xOffset, sin(utilAngle * 0.5) * sideLength + yOffset)];
+        [path addLineToPoint:CGPointMake(cos(utilAngle * 1.5) * sideLength + xOffset, sin(utilAngle * 1.5) * sideLength + yOffset)];
+        [path addLineToPoint:CGPointMake(cos(utilAngle * 2.5) * sideLength + xOffset, sin(utilAngle * 2.5) * sideLength + yOffset)];
+        CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
+        maskLayer.path = path.CGPath;
+        tempLayer.mask = maskLayer;
+        tempLayer.masksToBounds = YES;
+    }
+    
+    // add speline
+    CALayer *speLayer = [self generateSepLine: layer.sublayers.count];
+    [layer addSublayer:speLayer];
+}
+
+- (CALayer *)generateSepLine:(NSInteger)subCounts {
+    CAShapeLayer *layer = [CAShapeLayer layer];
+    layer.fillColor = nil; // 默认为blackColor
+    layer.lineWidth = _sepWidth;
+    layer.strokeColor = [UIColor whiteColor].CGColor;
+    
+    float sideLength = _size/2;
+
+    if (subCounts == 2) {
+        UIBezierPath *linePath = [UIBezierPath bezierPath];
+        [linePath moveToPoint:CGPointMake(sideLength, 0)];
+        [linePath addLineToPoint:CGPointMake(sideLength, sideLength*2)];
+        layer.path = linePath.CGPath;
+    } else if (subCounts == 3) {
+        // 1
+        UIBezierPath *linePath = [UIBezierPath bezierPath];
+        [linePath moveToPoint:CGPointMake(sideLength, 0)];
+        [linePath addLineToPoint:CGPointMake(sideLength, sideLength)];
+        layer.path = linePath.CGPath;
+        //2
+        CAShapeLayer *layer1 = [CAShapeLayer layer];
+        layer1.fillColor = nil;
+        layer1.lineWidth = _sepWidth;
+        layer1.strokeColor = [UIColor whiteColor].CGColor;
+        
+        UIBezierPath *linePath1 = [UIBezierPath bezierPath];
+        [linePath1 moveToPoint:CGPointMake(sideLength, sideLength)];
+        [linePath1 addLineToPoint:CGPointMake(sideLength - sin(M_PI / 3) * sideLength, sideLength * 3 / 2)];
+        layer1.path = linePath1.CGPath;
+        [layer addSublayer: layer1];
+        // 3
+        CAShapeLayer *layer2 = [CAShapeLayer layer];
+        layer2.fillColor = nil;
+        layer2.lineWidth = _sepWidth;
+        layer2.strokeColor = [UIColor whiteColor].CGColor;
+        
+        UIBezierPath *linePath2 = [UIBezierPath bezierPath];
+        [linePath2 moveToPoint:CGPointMake(sideLength, sideLength)];
+        [linePath2 addLineToPoint:CGPointMake(sideLength + sin(M_PI / 3) * sideLength, sideLength * 3 / 2)];
+        layer2.path = linePath2.CGPath;
+        [layer addSublayer: layer2];
+        
+    } else if (subCounts == 4) {
+        UIBezierPath *linePath = [UIBezierPath bezierPath];
+        [linePath moveToPoint:CGPointMake(sideLength, 0)];
+        [linePath addLineToPoint:CGPointMake(sideLength, sideLength*2)];
+        layer.path = linePath.CGPath;
+        
+        CAShapeLayer *layer1 = [CAShapeLayer layer];
+        layer1.fillColor = nil;
+        layer1.lineWidth = _sepWidth;
+        layer1.strokeColor = [UIColor whiteColor].CGColor;
+        
+        UIBezierPath *linePath1 = [UIBezierPath bezierPath];
+        [linePath1 moveToPoint:CGPointMake(0, sideLength)];
+        [linePath1 addLineToPoint:CGPointMake(sideLength * 2, sideLength)];
+        layer1.path = linePath1.CGPath;
+        [layer addSublayer: layer1];
+        
+    }
+    return layer;
+}
+
+
 @end

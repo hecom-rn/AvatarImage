@@ -1,5 +1,5 @@
 import React from 'react';
-import {Image, Platform, processColor, Text, View} from 'react-native';
+import {Image, Text, View} from 'react-native';
 import AvatarGroup from './AvatarGroup';
 
 export interface User {
@@ -191,22 +191,7 @@ export default class AvatarImage extends React.PureComponent<Props> {
     render() {
         const {size, style, colors, renderAvatar = this.renderDefaultAvatar} = this.props;
         const {users} = this.state;
-        const isIOS = Platform.OS === 'ios';
-        return isIOS ? (
-            <AvatarGroup
-                users={
-                    users.map(user => {
-                        return {
-                            name: this.getUserText(user),
-                            color: processColor(this.getFillColor(user, colors)),
-                            url: this.getThumbUrl(user.avatar)
-                        }
-                    })
-                }
-                sideLength={size / 2}
-                style={[style]}
-            />
-        ) : (
+        return (
             <AvatarGroup {...this.props} style={[{width: size, height: size}, style]}>
                 {users.map(renderAvatar)}
             </AvatarGroup>
