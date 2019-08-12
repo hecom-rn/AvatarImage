@@ -1,5 +1,5 @@
 import React from 'react';
-import {Image, Text, View} from 'react-native';
+import {Image, Text, View, Platform} from 'react-native';
 import AvatarGroup from './AvatarGroup';
 
 export interface User {
@@ -97,13 +97,13 @@ export default class AvatarImage extends React.PureComponent<Props> {
         const {size, colors, getThumbUrl = this.getThumbUrl} = this.props;
         const {users} = this.state;
         if (user.avatar) {
+            const {fontWeight,fontSize,lineHeight, ...others} = AvatarImage.getTextStyle(size, users.length, index);
             return (
-                <Image style={AvatarImage.getTextStyle(size, users.length, index)}
-                       source={{uri: getThumbUrl(user.avatar)}} />
+                <Image key={index} style={others} source={{uri: getThumbUrl(user.avatar)}} />
             );
         } else {
             return (
-                <Text style={[{
+                <Text key={index} style={[{
                     color: 'white',
                     backgroundColor: colors[Number(user.code) % colors.length],
                     textAlign: 'center',
@@ -117,7 +117,7 @@ export default class AvatarImage extends React.PureComponent<Props> {
 
     static getTextStyle(size, count, index) {
         let fontSize, paddingLeft = 0, paddingRight = 0, paddingTop = 0, paddingBottom = 0, width, height, top, left,
-            right, bottom, fontWeight, position = 'absolute';
+            right, bottom, fontWeight, position = 'absolute', lineHeight;
         const padding = size / 2 * (1 - Math.sin(Math.PI * 2 / 6));
         if (count === 1) {
             fontSize = size / 3;
@@ -167,12 +167,15 @@ export default class AvatarImage extends React.PureComponent<Props> {
             }
             if (index < 2) {
                 paddingTop = size / 8;
+                lineHeight = size / 3;
                 top = 0;
             } else {
                 paddingBottom = size / 8;
+                lineHeight = size / 3;
                 bottom = 0;
             }
         }
+        lineHeight = Platform.OS === 'ios' ? lineHeight ||  height : undefined;
         return {
             position,
             fontWeight,
@@ -183,6 +186,7 @@ export default class AvatarImage extends React.PureComponent<Props> {
             paddingBottom,
             width,
             height,
+            lineHeight,
             top,
             left,
             bottom,
