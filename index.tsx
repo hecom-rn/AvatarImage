@@ -98,7 +98,8 @@ export default class AvatarImage extends React.PureComponent<Props> {
         const {users} = this.state;
         if (user.avatar) {
             return (
-                <Image style={AvatarImage.getTextStyle(size, users.length, index)} source={{uri: getThumbUrl(user.avatar)}} />
+                <Image style={AvatarImage.getTextStyle(size, users.length, index)}
+                       source={{uri: getThumbUrl(user.avatar)}} />
             );
         } else {
             return (
@@ -119,11 +120,12 @@ export default class AvatarImage extends React.PureComponent<Props> {
             right, bottom, fontWeight, position = 'absolute';
         const padding = size / 2 * (1 - Math.sin(Math.PI * 2 / 6));
         if (count === 1) {
-            fontSize = size * 0.4;
+            fontSize = size / 3;
+            fontWeight = 'bold';
             width = size;
             height = size;
         } else if (count === 2) {
-            fontSize = size * 0.3;
+            fontSize = size / 3;
             width = size / 2;
             height = size;
             if (index === 0) {
