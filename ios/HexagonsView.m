@@ -11,6 +11,20 @@
 @implementation HexagonsView {
     NSInteger _size;
     NSInteger _sepWidth;
+    NSInteger _userLength;
+    BOOL _isUpdate;
+}
+
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        _size = 0;
+        _sepWidth = 0;
+        _userLength = 0;
+        _isUpdate = NO;
+    }
+    return self;
 }
 
 - (void)setSize:(NSInteger)size {
@@ -19,6 +33,15 @@
 
 - (void)setSepWidth:(NSInteger)sepWidth {
     _sepWidth = sepWidth;
+}
+
+- (void)setUsers:(NSArray*)users {
+    if (_userLength != users.count && _isUpdate) {
+        _isUpdate = !(_userLength >= 4 && users.count >= 4);
+        _userLength = users.count;
+        [self displayLayer: self.layer];
+    }
+    _userLength = users.count;
 }
 
 - (void)displayLayer:(CALayer *)layer {
@@ -57,8 +80,23 @@
     }
     
     // add speline
-    CALayer *speLayer = [self generateSepLine: layer.sublayers.count];
+    CALayer *speLayer;
+    if (_isUpdate) {
+//       [layer.sublayers makeObjectsPerformSelector:@selector(removeFromSuperlayer)];
+         [self hiddenAllSublayers:layer];
+        speLayer = [self generateSepLine: _userLength > 4 ? 4 : _userLength];
+    } else {
+        speLayer = [self generateSepLine: layer.sublayers.count];
+    }
     [layer addSublayer:speLayer];
+    
+    _isUpdate = YES;
+}
+
+- (void)hiddenAllSublayers:(CALayer*)layer {
+    for (CALayer *subLayer in layer.sublayers) {
+        [subLayer setHidden:YES];
+    }
 }
 
 - (CALayer *)generateSepLine:(NSInteger)subCounts {
@@ -70,18 +108,21 @@
     float sideLength = _size/2;
 
     if (subCounts == 2) {
+        layer.zPosition = 100;
         UIBezierPath *linePath = [UIBezierPath bezierPath];
         [linePath moveToPoint:CGPointMake(sideLength, 0)];
         [linePath addLineToPoint:CGPointMake(sideLength, sideLength*2)];
         layer.path = linePath.CGPath;
     } else if (subCounts == 3) {
         // 1
+        layer.zPosition = 101;
         UIBezierPath *linePath = [UIBezierPath bezierPath];
         [linePath moveToPoint:CGPointMake(sideLength, 0)];
         [linePath addLineToPoint:CGPointMake(sideLength, sideLength)];
         layer.path = linePath.CGPath;
         //2
         CAShapeLayer *layer1 = [CAShapeLayer layer];
+        layer1.zPosition = 102;
         layer1.fillColor = nil;
         layer1.lineWidth = _sepWidth;
         layer1.strokeColor = [UIColor whiteColor].CGColor;
@@ -94,6 +135,7 @@
         // 3
         CAShapeLayer *layer2 = [CAShapeLayer layer];
         layer2.fillColor = nil;
+        layer2.zPosition = 103;
         layer2.lineWidth = _sepWidth;
         layer2.strokeColor = [UIColor whiteColor].CGColor;
         
@@ -104,6 +146,7 @@
         [layer addSublayer: layer2];
         
     } else if (subCounts == 4) {
+        layer.zPosition = 104;
         UIBezierPath *linePath = [UIBezierPath bezierPath];
         [linePath moveToPoint:CGPointMake(sideLength, 0)];
         [linePath addLineToPoint:CGPointMake(sideLength, sideLength*2)];
@@ -111,6 +154,7 @@
         
         CAShapeLayer *layer1 = [CAShapeLayer layer];
         layer1.fillColor = nil;
+        layer1.zPosition = 105;
         layer1.lineWidth = _sepWidth;
         layer1.strokeColor = [UIColor whiteColor].CGColor;
         
