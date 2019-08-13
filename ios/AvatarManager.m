@@ -15,7 +15,9 @@
 
 @implementation AvatarManager
 
-RCT_EXPORT_VIEW_PROPERTY(param, NSDictionary)
+RCT_EXPORT_VIEW_PROPERTY(size, NSInteger)
+RCT_EXPORT_VIEW_PROPERTY(sepWidth, NSInteger)
+RCT_EXPORT_VIEW_PROPERTY(users, NSArray)
 
 RCT_EXPORT_MODULE(AvatarManager)
 
