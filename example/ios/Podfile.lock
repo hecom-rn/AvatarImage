@@ -164,7 +164,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   hecom-rn-avatarImage:
-    :commit: f3fc7e9a08100d9a8b05aaf8a030c798b26e6e61
+    :commit: 646479fee637f05a16b3b2d91f96ff82d9500d3d
     :git: https://github.com/hecom-rn/AvatarImage.git
 
 SPEC CHECKSUMS:

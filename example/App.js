@@ -39,6 +39,7 @@ class App extends React.Component {
                             <Avatar
                                 style={[styles.avatar]}
                                 size={size}
+                                borderEnable={true}
                                 users={[{code: 1, name: '白宇东'}]}
                             />
                             <Avatar
@@ -147,7 +148,7 @@ const styles = StyleSheet.create({
         marginTop: 16,
         marginLeft: 16
     },
-    avatar: {marginHorizontal: 8},
+    avatar: {marginLeft: 20},
     button: {height: 48, justifyContent: 'center', alignItems: 'center', flex: 1}
 });
 

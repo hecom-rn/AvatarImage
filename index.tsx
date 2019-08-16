@@ -1,5 +1,5 @@
 import React from 'react';
-import {Image, Text, View, Platform} from 'react-native';
+import {Image, Text, View, Platform, ImageBackground} from 'react-native';
 import AvatarGroup from './AvatarGroup';
 
 export interface User {
@@ -41,7 +41,21 @@ export interface Props {
      * @returns {string}
      */
     getThumbUrl: (url: string) => string;
+    /**
+     * 是否使用图片边框
+     */
+    borderEnable: boolean;
 }
+
+const textBorder = {
+    '#3EAAFF': require('./image/3EAAFF.png'),
+    '#47C2E7': require('./image/47C2E7.png'),
+    '#FD6364': require('./image/FD6364.png'),
+    '#FDC63F': require('./image/FDC63F.png'),
+    '#BEE15D': require('./image/BEE15D.png'),
+    '#28D9C1': require('./image/28D9C1.png'),
+    '#FF9D50': require('./image/FF9D50.png'),
+};
 
 export default class AvatarImage extends React.PureComponent<Props> {
     static defaultProps = {
@@ -50,6 +64,7 @@ export default class AvatarImage extends React.PureComponent<Props> {
         radius: 2,
         sepWidth: 1,
         users: [],
+        borderEnable: false,
     };
 
     static getDerivedStateFromProps(nextProp) {
@@ -92,6 +107,24 @@ export default class AvatarImage extends React.PureComponent<Props> {
     getFillColor = (user, colors) => {
         return colors[Number(user.code) % colors.length];
     };
+
+    borderWapper = () => {
+        const {size, colors, style, renderAvatar = this.renderDefaultAvatar} = this.props;
+        const {users} = this.state;
+        const fristUser = users && users.length > 0 && users[0];
+        if (!fristUser) {
+            return <View/>;
+        }
+        const colorName = this.getFillColor(fristUser, colors);
+        const source = fristUser.avatar ? require('./image/gray.png') : textBorder[colorName];
+        return (
+            <ImageBackground source={source} style={[ style]}>
+                <AvatarGroup {...this.props} style={[{width: size, height: size, margin: 13}]}>
+                    {users.map(renderAvatar)}
+                </AvatarGroup>
+            </ImageBackground>
+        );
+    }
 
     renderDefaultAvatar = (user, index) => {
         const {size, colors, getThumbUrl = this.getThumbUrl} = this.props;
@@ -195,9 +228,9 @@ export default class AvatarImage extends React.PureComponent<Props> {
     }
 
     render() {
-        const {size, style, colors, renderAvatar = this.renderDefaultAvatar} = this.props;
+        const {size, style, colors, renderAvatar = this.renderDefaultAvatar, borderEnable} = this.props;
         const {users} = this.state;
-        return (
+        return borderEnable ? this.borderWapper() : (
             <AvatarGroup {...this.props} style={[{width: size, height: size}, style]}>
                 {users.map(renderAvatar)}
             </AvatarGroup>
