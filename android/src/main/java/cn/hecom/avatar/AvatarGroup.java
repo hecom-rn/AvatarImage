@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.PointF;
 import android.graphics.Path;
 import android.support.annotation.NonNull;
 import android.view.View;
@@ -14,9 +15,11 @@ import com.facebook.react.views.view.ReactViewGroup;
 public class AvatarGroup extends ReactViewGroup {
 
     private int numberOfSides = 6;
-    private int radius = 2;
+    private float radius = 2;
+    private int rotate = 90;
     private int width;
     private int height;
+    private boolean useBorder = false;
     private boolean needUpdatePath = true;
     private Paint sepPaint = new Paint();
     private Path clipPath = new Path();
@@ -32,28 +35,6 @@ public class AvatarGroup extends ReactViewGroup {
 
     protected float dpToPx(float dp) {
         return dp * this.getContext().getResources().getDisplayMetrics().density;
-    }
-
-    private void calculatePath() {
-        final float section = (float) (2.0 * Math.PI / numberOfSides);
-        final int polygonSize = Math.min(width, height);
-        final int radius = polygonSize / 2;
-        final int centerX = width / 2;
-        final int centerY = height / 2;
-
-        clipPath.reset();
-        clipPath.moveTo((centerX + radius * (float) Math.cos(0)), (centerY + radius * (float) Math.sin(0)));
-
-        for (int i = 1; i < numberOfSides; i++) {
-            clipPath.lineTo((centerX + radius * (float) Math.cos(section * i)),
-                    (centerY + radius * (float) Math.sin(section * i)));
-        }
-
-        clipPath.close();
-        Matrix matrix = new Matrix();
-        matrix.postRotate(90, centerX, centerY);
-        clipPath.transform(matrix);
-        postInvalidate();
     }
 
     @Override
@@ -91,12 +72,27 @@ public class AvatarGroup extends ReactViewGroup {
     @Override
     public void dispatchDraw(Canvas canvas) {
         if (needUpdatePath) {
-            calculatePath();
+            final int polygonSize = Math.min(width, height);
+            final float size = polygonSize / 2f;
+            PointF center = new PointF(width / 2f, height / 2f);
+            PathUtil.calculatePath(clipPath, center, numberOfSides, size, radius, (float) (rotate / 180.0 * Math.PI));
             needUpdatePath = false;
         }
+        canvas.save();
         canvas.clipPath(clipPath);
         super.dispatchDraw(canvas);
         drawSep(canvas);
+        canvas.restore();
+    }
+
+    private float getSize() {
+        float offset = useBorder
+        if (useBorder) {
+
+        } else {
+
+        }
+        return (Math.min(width, height) - offset) / 2f;
     }
 
     private void drawSep(Canvas canvas) {
@@ -121,22 +117,28 @@ public class AvatarGroup extends ReactViewGroup {
         }
     }
 
-    public int getNoOfSides() {
-        return numberOfSides;
-    }
-
-    public void setNoOfSides(int numberOfSides) {
+    void setNoOfSides(int numberOfSides) {
         this.numberOfSides = numberOfSides;
         updatePath();
     }
 
+    void setRotate(int rotate) {
+        this.rotate = rotate;
+        updatePath();
+    }
+
     void setRadius(int radius) {
-        this.radius = radius;
+        this.radius = dpToPx(radius);
         updatePath();
     }
 
     void setSepWidth(int width) {
         sepPaint.setStrokeWidth(dpToPx(width));
+        updatePath();
+    }
+
+    void useBorder(boolean useBorder) {
+        this.useBorder = useBorder;
         updatePath();
     }
 

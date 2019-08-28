@@ -12,7 +12,8 @@ import { SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity
 import { Colors, } from 'react-native/Libraries/NewAppScreen';
 import Avatar from '@hecom/image-avatar'
 
-const size = 88;
+const size = 120;
+const radius = 10;
 
 class App extends React.Component {
     constructor(props) {
@@ -39,11 +40,13 @@ class App extends React.Component {
                             <Avatar
                                 style={[styles.avatar]}
                                 size={size}
+                                radius={radius}
                                 borderEnable={true}
                                 users={[{code: 1, name: '白宇东'}]}
                             />
                             <Avatar
                                 style={styles.avatar}
+                                radius={radius}
                                 size={size}
                                 users={[{code: 2, name: 'abc'}]}
                             />
@@ -55,6 +58,7 @@ class App extends React.Component {
                             <Avatar
                                 style={styles.avatar}
                                 size={size}
+                                radius={radius}
                                 users={[{
                                     code: 3,
                                     name: '白宇东',
@@ -68,7 +72,8 @@ class App extends React.Component {
                         <View style={styles.container}>
                             <Avatar
                                 style={styles.avatar}
-                                size={size}
+                                size={48}
+                                radius={48/10}
                                 users={[{code: 4, name: '白宇东'}, {
                                     code: 3,
                                     name: '白宇东',
@@ -77,7 +82,8 @@ class App extends React.Component {
                             />
                             <Avatar
                                 style={styles.avatar}
-                                size={size}
+                                size={56}
+                                radius={56/10}
                                 users={[{code: 5, name: '白宇东'}, {
                                     code: 3,
                                     name: '白宇东',
@@ -86,7 +92,8 @@ class App extends React.Component {
                             />
                             <Avatar
                                 style={styles.avatar}
-                                size={size}
+                                size={36}
+                                radius={36/10}
                                 users={[{code: 6, name: '白宇东'}, {
                                     code: 3,
                                     name: '白宇东',
@@ -103,6 +110,7 @@ class App extends React.Component {
                         <View style={styles.container}>
                             <Avatar
                                 style={styles.avatar}
+                                radius={radius}
                                 size={size}
                                 users={this.state.users}
                             />

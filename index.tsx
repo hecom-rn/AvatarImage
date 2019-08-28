@@ -1,5 +1,5 @@
 import React from 'react';
-import {Image, Text, View, Platform, ImageBackground} from 'react-native';
+import {Image, ImageBackground, Platform, StyleSheet, Text, View} from 'react-native';
 import AvatarGroup from './AvatarGroup';
 
 export interface User {
@@ -12,50 +12,52 @@ export interface Props {
     /**
      * 员工，如果users有值则无效
      */
-    user: User,
+    user: User
     /**
      * 群头像员工列表，优先于user属性
      */
-    users: User[],
+    users: User[]
     /**
      * 视图大小，正六边形的直径
      */
-    size: number,
+    size: number
     /**
      * 分隔线宽度
      */
-    sepWidth: number,
+    sepWidth: number
     /**
      * 默认头像背景色
      */
-    colors: string[],
+    colors: string[]
     /**
      * 自定义头像绘制方法
      * @param {User} user
      * @returns {React.Element}
      */
-    renderAvatar: (user: User) => React.Element;
+    renderAvatar: (user: User) => React.Element
     /**
      * 缩略图
      * @param {string} url
      * @returns {string}
      */
-    getThumbUrl: (url: string) => string;
+    getThumbUrl: (url: string) => string
     /**
-     * 是否使用图片边框
+     * 正多边形边数，默认6
      */
-    borderEnable: boolean;
+    numberOfSides: number
+    /**
+     * 是否使用边框
+     */
+    borderEnable: boolean
+    border: {
+        innerBorderWidth: number
+        innerBorderColor: string
+        outerBorderWidth: number
+        defOuterBorderColors: string[]
+        imageBorderColor: string
+        borderSpace: number
+    }
 }
-
-const textBorder = {
-    '#3EAAFF': require('./image/3EAAFF.png'),
-    '#47C2E7': require('./image/47C2E7.png'),
-    '#FD6364': require('./image/FD6364.png'),
-    '#FDC63F': require('./image/FDC63F.png'),
-    '#BEE15D': require('./image/BEE15D.png'),
-    '#28D9C1': require('./image/28D9C1.png'),
-    '#FF9D50': require('./image/FF9D50.png'),
-};
 
 export default class AvatarImage extends React.PureComponent<Props> {
     static defaultProps = {
@@ -64,7 +66,17 @@ export default class AvatarImage extends React.PureComponent<Props> {
         radius: 2,
         sepWidth: 1,
         users: [],
+        numberOfSides: 6,
+        rotate: 0,
         borderEnable: false,
+        border: {
+            innerBorderWidth: StyleSheet.hairlineWidth,
+            innerBorderColor: '#FFFFFF',
+            outerBorderWidth: 2,
+            defOuterBorderColors: ['#FFE4CD','#CBE7FF','#DAF6FF','#FFE1E1','#E6F5BE','#D3F9F4','#FCF1D8'],
+            imageBorderColor: '#F1F1F1',
+            borderSpace: 5
+        },
     };
 
     static getDerivedStateFromProps(nextProp) {
@@ -113,24 +125,24 @@ export default class AvatarImage extends React.PureComponent<Props> {
         const {users} = this.state;
         const fristUser = users && users.length > 0 && users[0];
         if (!fristUser) {
-            return <View/>;
+            return <View />;
         }
         const colorName = this.getFillColor(fristUser, colors);
         const source = fristUser.avatar ? require('./image/gray.png') : textBorder[colorName];
         return (
-            <ImageBackground source={source} style={[ style]}>
+            <ImageBackground source={source} style={[style]}>
                 <AvatarGroup {...this.props} style={[{width: size, height: size, margin: 13}]}>
                     {users.map(renderAvatar)}
                 </AvatarGroup>
             </ImageBackground>
         );
-    }
+    };
 
     renderDefaultAvatar = (user, index) => {
         const {size, colors, getThumbUrl = this.getThumbUrl} = this.props;
         const {users} = this.state;
         if (user.avatar) {
-            const {fontWeight,fontSize,lineHeight, ...others} = AvatarImage.getTextStyle(size, users.length, index);
+            const {fontWeight, fontSize, lineHeight, ...others} = AvatarImage.getTextStyle(size, users.length, index);
             return (
                 <Image key={index} style={others} source={{uri: getThumbUrl(user.avatar)}} />
             );
@@ -208,7 +220,7 @@ export default class AvatarImage extends React.PureComponent<Props> {
                 bottom = 0;
             }
         }
-        lineHeight = Platform.OS === 'ios' ? lineHeight ||  height : undefined;
+        lineHeight = Platform.OS === 'ios' ? lineHeight || height : undefined;
         return {
             position,
             fontWeight,
@@ -228,9 +240,9 @@ export default class AvatarImage extends React.PureComponent<Props> {
     }
 
     render() {
-        const {size, style, colors, renderAvatar = this.renderDefaultAvatar, borderEnable} = this.props;
+        const {size, style, renderAvatar = this.renderDefaultAvatar} = this.props;
         const {users} = this.state;
-        return borderEnable ? this.borderWapper() : (
+        return (
             <AvatarGroup {...this.props} style={[{width: size, height: size}, style]}>
                 {users.map(renderAvatar)}
             </AvatarGroup>

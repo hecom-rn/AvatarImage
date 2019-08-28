@@ -32,4 +32,18 @@ public class AvatarManager extends ReactViewManager {
     public void setSepWidth(AvatarGroup view, int width) {
         view.setSepWidth(width);
     }
+
+    @ReactProp(name = "rotate", defaultInt = 90)
+    public void setRotate(AvatarGroup view, int rotate) {
+        view.setRotate(rotate);
+    }
+
+    @ReactProp(name = "borderEnable", defaultBoolean = false)
+    public void setBorderEnable(AvatarGroup view, boolean useBorder){
+        view.useBorder(useBorder);
+    }
+    @ReactProp(name = "border")
+    public void setBorderProps(AvatarGroup view, ReadableMap border) {
+        
+    }
 }
