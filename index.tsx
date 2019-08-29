@@ -64,7 +64,6 @@ export default class AvatarImage extends React.PureComponent<Props> {
         colors: ['#3EAAFF', '#47C2E7', '#FD6364', '#FDC63F', '#BEE15D', '#28D9C1', '#FF9D50'],
         defOuterBorderColors: ['#CBE7FF', '#DAF6FF', '#FFE1E1', '#FCF1D8', '#E6F5BE', '#D3F9F4', '#FFE4CD'],
         size: 48,
-        radius: 2,
         sepWidth: 1,
         color: '#FF9D50',
         users: [],
@@ -84,7 +83,7 @@ export default class AvatarImage extends React.PureComponent<Props> {
         return AvatarImage.convertProp(nextProp);
     }
 
-    static convertProp({users, user}) {
+    static convertProp({users, user, size, radius}) {
         let stateUsers;
         if (users.length === 0 && user) {
             stateUsers = [user];
@@ -94,7 +93,7 @@ export default class AvatarImage extends React.PureComponent<Props> {
         } else {
             stateUsers = users;
         }
-        return {users: stateUsers};
+        return {users: stateUsers, radius: radius || size / 12};
     }
 
     constructor(props) {
@@ -232,10 +231,11 @@ export default class AvatarImage extends React.PureComponent<Props> {
 
     render() {
         const {size, style, renderAvatar = this.renderDefaultAvatar, defOuterBorderColors, border} = this.props;
-        const {users} = this.state;
+        const {users, radius} = this.state;
         return (
             <AvatarGroup
                 {...this.props}
+                radius={radius}
                 border={AvatarImage.processBorder(defOuterBorderColors, border, users)}
                 style={[{width: size, height: size}, style]}
             >
