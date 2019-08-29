@@ -1,5 +1,5 @@
 import React from 'react';
-import {Image, ImageBackground, Platform, StyleSheet, Text, View} from 'react-native';
+import {Image, ImageBackground, Platform, StyleSheet, Text, View, processColor} from 'react-native';
 import AvatarGroup from './AvatarGroup';
 
 export interface User {
@@ -227,7 +227,7 @@ export default class AvatarImage extends React.PureComponent<Props> {
         if (users.length === 1 && !users[0].avatar) {
             color = defOuterBorderColors[Number(users[0].code) % defOuterBorderColors.length]
         }
-        return {...border, outerBorderColor: color}
+        return {...border, outerBorderColor: processColor(color), innerBorderColor: processColor(border.innerBorderColor)}
     }
 
     render() {
