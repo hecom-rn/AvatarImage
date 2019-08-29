@@ -13,6 +13,16 @@
     NSInteger _sepWidth;
     NSInteger _userLength;
     BOOL _isUpdate;
+ 
+    // border style
+    BOOL _borderEnable;
+    UIColor *_innerBorderColor;
+    CGFloat _innerBorderWidth;
+    CGFloat _filletDegree; // 圆角度
+    UIColor *_borderColor;
+    CGFloat _borderSpace;
+    CGFloat _borderWidth;
+    
 }
 
 - (instancetype)init
@@ -23,8 +33,33 @@
         _sepWidth = 0;
         _userLength = 0;
         _isUpdate = NO;
+        _borderEnable = YES;
+        _filletDegree = 5;
+        _innerBorderColor = [UIColor redColor];
+        _innerBorderWidth = 1;
+        _borderColor = [UIColor blueColor];
+        _borderSpace = 5;
+        _borderWidth = 2;
     }
     return self;
+}
+
+#pragma mark - props
+
+- (void)setRadius:(NSInteger)radius{
+    _filletDegree = radius;
+}
+
+- (void)setBorderEnable:(BOOL)borderEnable{
+    _borderEnable = borderEnable;
+}
+
+- (void)setBorder:(NSDictionary*)border{
+    _innerBorderColor = [RCTConvert UIColor:[border objectForKey:@"innerBorderColor"]];
+    _borderColor = [RCTConvert UIColor:[border objectForKey:@"outerBorderColor"]];
+    _borderWidth = [RCTConvert NSInteger:[border objectForKey:@"outerBorderWidth"]];
+    _borderSpace = [RCTConvert NSInteger:[border objectForKey:@"borderSpace"]];
+    _innerBorderWidth = [RCTConvert NSInteger:[border objectForKey:@"innerBorderWidth"]];
 }
 
 - (void)setSize:(NSInteger)size {
@@ -44,29 +79,20 @@
     _userLength = users.count;
 }
 
+#pragma mark - delegate
 - (void)displayLayer:(CALayer *)layer {
-    
     // clip content
-    float sideLength = _size/2;
-    CGFloat utilAngle = M_PI / 3;
-    float xOffset = sideLength;
-    float yOffset = sideLength;
-    UIBezierPath *path = [UIBezierPath bezierPath];
-    [path moveToPoint:CGPointMake(cos(utilAngle * 1.5) * sideLength + xOffset, sin(utilAngle * 1.5) * sideLength + yOffset)];
-    [path addLineToPoint:CGPointMake(cos(utilAngle * 2.5) * sideLength + xOffset, sin(utilAngle * 2.5) * sideLength + yOffset)];
-    [path addLineToPoint:CGPointMake(cos(utilAngle * 3.5) * sideLength + xOffset, sin(utilAngle * 3.5) * sideLength + yOffset)];
-    [path addLineToPoint:CGPointMake(cos(utilAngle * 4.5) * sideLength + xOffset, sin(utilAngle * 4.5) * sideLength + yOffset)];
-    [path addLineToPoint:CGPointMake(cos(utilAngle * 5.5) * sideLength + xOffset, sin(utilAngle * 5.5) * sideLength + yOffset)];
-    [path addLineToPoint:CGPointMake(cos(utilAngle * 0.5) * sideLength + xOffset, sin(utilAngle * 0.5) * sideLength + yOffset)];
-    
+    CGFloat size = _borderEnable ? _size - _borderWidth - 2 * _borderSpace - _innerBorderWidth : _size;
     CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
-    maskLayer.path = path.CGPath;
+    maskLayer.path = [self drawPathWith:size];
     layer.mask  = maskLayer;
-    layer.masksToBounds = YES;
     
     // clip when subViews count equal to 3
     if (layer.sublayers.count == 3) {
-        yOffset = 0;
+        float sideLength = _size/2;
+        CGFloat utilAngle = M_PI / 3;
+        float xOffset = sideLength;
+        float yOffset = 0;
         CALayer *tempLayer = layer.sublayers[2];
         UIBezierPath *path = [UIBezierPath bezierPath];
         [path moveToPoint:CGPointMake(cos(utilAngle * 1.5) * sideLength + xOffset, yOffset)];
@@ -76,7 +102,6 @@
         CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
         maskLayer.path = path.CGPath;
         tempLayer.mask = maskLayer;
-        tempLayer.masksToBounds = YES;
     }
     
     // add speline
@@ -90,9 +115,88 @@
     }
     [layer addSublayer:speLayer];
     
+    if (_borderEnable) {
+        CAShapeLayer *innerBorderLayer = [[CAShapeLayer alloc] init];
+        innerBorderLayer.zPosition = 200;
+        innerBorderLayer.path = [self drawPathWith:size];
+        innerBorderLayer.lineWidth = _innerBorderWidth * 2;
+        innerBorderLayer.fillColor = nil;
+        innerBorderLayer.strokeColor = _innerBorderColor.CGColor;
+        [layer addSublayer:innerBorderLayer];
+        
+        CAShapeLayer *borderLayer = [[CAShapeLayer alloc] init];
+        borderLayer.zPosition = 201;
+        borderLayer.frame = layer.frame;
+        borderLayer.path = [self drawPathWith: size + 10];
+        borderLayer.lineWidth = _borderWidth;
+        borderLayer.fillColor = nil;
+        borderLayer.strokeColor = _borderColor.CGColor;
+        [layer.superlayer addSublayer:borderLayer];
+    }
+    
     _isUpdate = YES;
 }
 
+#pragma mark - generate path
+- (CGPathRef)drawPathWith:(CGFloat)size {
+    UIBezierPath *path = [UIBezierPath bezierPath];
+    NSArray *points = [self regularPolygonCoordinatesWithRoundedCorner:6 radius:size/2 offset:M_PI_2];
+    for (int i = 0; i < points.count; i++) {
+        CGPoint point = [points[i] CGPointValue];
+        CGPoint tempPoint;
+        if (i == 0) {
+            [path moveToPoint:point];
+        } else {
+            int remainder = i % 3;
+            switch (remainder) {
+                case 0:
+                    [path addLineToPoint:point];
+                    break;
+                case 1:
+                    tempPoint = point;
+                    break;
+                case 2:
+                    [path addQuadCurveToPoint:point controlPoint:tempPoint];
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+    [path closePath];
+    return path.CGPath;
+}
+
+- (CGPoint)vertexCoordinates:(CGFloat)radius angle:(double)angle offset:(double) offset{
+    CGPoint centerPoint = CGPointMake(_size/2, _size/2);
+    CGFloat x = centerPoint.x + radius * cos(angle + offset);
+    CGFloat y = centerPoint.y + radius * sin(angle + offset);
+    return CGPointMake(x, y);
+}
+
+- (NSArray *)regularPolygonCoordinatesWithRoundedCorner:(double)sides radius:(CGFloat)radius offset:(CGFloat) offset  {
+    CGFloat CAB = M_PI / 3;
+    CGFloat EC = sin(CAB * 0.5) * radius;
+    CGFloat AE = cos(CAB * 0.5) * radius;
+    CGFloat ED = EC - _filletDegree;
+    CGFloat EAD = atan(ED / AE);
+    CGFloat DAC = CAB / 2 - EAD;
+    CGFloat newRadius = sqrt(pow(AE, 2) + pow(ED, 2));
+    NSMutableArray *cooordinates = [NSMutableArray array];
+    for (double i = 0; i < sides; i++) {
+        double direction = i / sides * 2 * M_PI;
+        CGPoint point = [self vertexCoordinates:radius angle:direction offset:offset];
+        CGFloat leftAngle = direction - DAC;
+        CGPoint leftPoint = [self vertexCoordinates:newRadius angle:leftAngle offset:offset];
+        CGFloat rightAngle = direction + DAC;
+        CGPoint rightPoint = [self vertexCoordinates:newRadius angle:rightAngle offset:offset];
+        NSArray *pointArray = @[[NSValue valueWithCGPoint:leftPoint],[NSValue valueWithCGPoint:point],[NSValue valueWithCGPoint:rightPoint]];
+        [cooordinates addObjectsFromArray: pointArray];
+    }
+    return  cooordinates;
+}
+
+#pragma mark - speLine
 - (void)hiddenAllSublayers:(CALayer*)layer {
     for (CALayer *subLayer in layer.sublayers) {
         [subLayer setHidden:YES];
