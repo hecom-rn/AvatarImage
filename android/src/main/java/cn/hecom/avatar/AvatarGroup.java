@@ -6,6 +6,10 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.view.View;
 
@@ -24,22 +28,16 @@ public class AvatarGroup extends ReactViewGroup {
     private boolean useBorder = false;
     private Border mBorder;
     private boolean needUpdatePath = true;
-    /**
-     * 头像区域分隔线画笔
-     */
     private Paint sepPaint = new Paint();
     private Paint borderPaint = new Paint();
-    /**
-     * 边框路径
-     */
     private Path borderPath = new Path();
-    /**
-     * 头像区域边界路径
-     */
     private Path clipPath = new Path();
-    /**
-     * 中心点
-     */
+    private final Paint clipPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+
+    private Path rectView = new Path();
+
+    protected PorterDuffXfermode pdMode = new PorterDuffXfermode(PorterDuff.Mode.DST_OUT);
+
     private PointF center = new PointF();
 
     public AvatarGroup(@NonNull Context context) {
@@ -47,9 +45,37 @@ public class AvatarGroup extends ReactViewGroup {
         init();
     }
 
+    @Override
+    public void setBackgroundResource(int resid) {
+    }
+
+    @Override
+    public void setBackground(Drawable drawable) {
+    }
+
+    @Override
+    public void setBackgroundColor(int color) {
+    }
+
     private void init() {
         sepPaint.setColor(Color.WHITE);
-        borderPaint.setStyle(Paint.Style.STROKE);
+        sepPaint.setAntiAlias(true);
+        borderPaint.setAntiAlias(true);
+        clipPaint.setAntiAlias(true);
+
+        setWillNotDraw(false);
+
+        clipPaint.setColor(Color.BLUE);
+        clipPaint.setStyle(Paint.Style.FILL);
+        clipPaint.setStrokeWidth(1);
+
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.O_MR1) {
+            clipPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
+            setLayerType(LAYER_TYPE_SOFTWARE, clipPaint);
+        } else {
+            clipPaint.setXfermode(pdMode);
+            setLayerType(LAYER_TYPE_SOFTWARE, null);
+        }
     }
 
     protected float dpToPx(float dp) {
@@ -62,6 +88,14 @@ public class AvatarGroup extends ReactViewGroup {
         width = MeasureSpec.getSize(widthMeasureSpec);
         height = MeasureSpec.getSize(heightMeasureSpec);
         center.set(width / 2f, height / 2f);
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+        if (changed) {
+            updatePath();
+        }
     }
 
     @Override
@@ -91,28 +125,47 @@ public class AvatarGroup extends ReactViewGroup {
 
     @Override
     public void dispatchDraw(Canvas canvas) {
+        super.dispatchDraw(canvas);
+
         if (needUpdatePath) {
-            PathUtil.calculatePath(clipPath, center, numberOfSides, getSize(useBorder), radius, rotate);
-            if (useBorder) {
-                PathUtil.calculatePath(borderPath, center, numberOfSides, getSize(false), radius, rotate);
-            }
+            calculatePath();
             needUpdatePath = false;
         }
+
+        drawSep(canvas);
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.O_MR1) {
+            canvas.drawPath(clipPath, clipPaint);
+        } else {
+            canvas.drawPath(rectView, clipPaint);
+        }
+
         if (useBorder && mBorder != null) {
             drawBorder(canvas);
         }
-        canvas.save();
-        canvas.clipPath(clipPath);
-        super.dispatchDraw(canvas);
-        drawSep(canvas);
-        canvas.restore();
+    }
 
+    private void calculatePath() {
+        rectView.reset();
+        rectView.addRect(0, 0, width, height, Path.Direction.CW);
+
+        PathUtil.calculatePath(clipPath, center, numberOfSides, getSize(useBorder), radius, rotate);
+        if (useBorder) {
+            PathUtil.calculatePath(borderPath, center, numberOfSides, getSize(false), radius, rotate);
+        }
+
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O_MR1) {
+            rectView.op(clipPath, Path.Op.DIFFERENCE);
+        }
     }
 
     private float getSize(boolean useBorder) {
-        float offset = useBorder && mBorder != null ? dpToPx((mBorder.getOuterBorderWidth() + mBorder
-                .getBorderSpace() + mBorder.getInnerBorderWidth()) * 2) : 0;
+        float offset = useBorder && mBorder != null ? borderWidth() : 0;
         return (Math.min(width, height) - offset) / 2f;
+    }
+
+    private float borderWidth() {
+        return dpToPx((mBorder.getOuterBorderWidth() + mBorder
+                .getBorderSpace() + mBorder.getInnerBorderWidth()) * 2);
     }
 
     private void drawBorder(Canvas canvas) {

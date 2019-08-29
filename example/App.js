@@ -67,6 +67,16 @@ class App extends React.Component {
                                     avatar: 'https://paas-migration-attachments.oss-cn-beijing.aliyuncs.com/filemanage/photoFiles/2019/8/v1907/c239/c239_20190802165955255.jpg'
                                 }]}
                             />
+                            <Avatar
+                                style={styles.avatar}
+                                size={size}
+                                radius={radius}
+                                users={[{
+                                    code: 3,
+                                    name: '白宇东',
+                                    avatar: 'https://paas-migration-attachments.oss-cn-beijing.aliyuncs.com/filemanage/photoFiles/2019/8/v1907/c239/c239_20190802165955255.jpg'
+                                }]}
+                            />
                         </View>
                         <Text style={styles.label}>
                             {'群头像'}
