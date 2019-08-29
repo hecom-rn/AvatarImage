@@ -99,7 +99,7 @@ export default class AvatarImage extends React.PureComponent<Props> {
         return {
             innerBorderWidth: 1,
             outerBorderWidth: 2,
-            borderSpace: border.borderSpace || size / 24,
+            borderSpace: size / 24,
             outerBorderColor: processColor(color),
             innerBorderColor: processColor('#FFF'),
             ...border,
