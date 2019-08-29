@@ -7,3 +7,12 @@ build
 local.properties
 *.jsx
 *.js
+*.xcworkspace
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+!*.xcworkspace/contents.xcworkspacedata
+/*.gcno
+
+Pods/
+Podfile.lock
