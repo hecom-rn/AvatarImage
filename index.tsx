@@ -1,11 +1,19 @@
 import React from 'react';
-import {Image, ImageBackground, Platform, StyleSheet, Text, View, processColor} from 'react-native';
+import {Image, ImageBackground, Platform, processColor, StyleSheet, Text, View} from 'react-native';
 import AvatarGroup from './AvatarGroup';
 
 export interface User {
     code: number
     name: string
     avatar?: string
+}
+
+export interface Border {
+    innerBorderWidth?: number
+    innerBorderColor?: string
+    outerBorderWidth?: number
+    outerBorderColor?: string
+    borderSpace?: number
 }
 
 export interface Props {
@@ -50,13 +58,7 @@ export interface Props {
      * 是否使用边框
      */
     borderEnable: boolean
-    border: {
-        innerBorderWidth: number
-        innerBorderColor: string
-        outerBorderWidth: number
-        outerBorderColor: string
-        borderSpace: number
-    }
+    border?: Border
 }
 
 export default class AvatarImage extends React.PureComponent<Props> {
@@ -70,13 +72,6 @@ export default class AvatarImage extends React.PureComponent<Props> {
         numberOfSides: 6,
         rotate: 90,
         borderEnable: false,
-        border: {
-            innerBorderWidth: 1,
-            innerBorderColor: '#FFFFFF',
-            outerBorderWidth: 2,
-            outerBorderColor: '#F1F1F1',
-            borderSpace: 5
-        },
     };
 
     static getDerivedStateFromProps(nextProp) {
@@ -94,6 +89,21 @@ export default class AvatarImage extends React.PureComponent<Props> {
             stateUsers = users;
         }
         return {users: stateUsers, radius: radius || size / 12};
+    }
+
+    static processBorder(size, defOuterBorderColors, border: Border = {}, users) {
+        let color = '#F1F1F1';
+        if (users.length === 1 && !users[0].avatar) {
+            color = defOuterBorderColors[Number(users[0].code) % defOuterBorderColors.length]
+        }
+        return {
+            innerBorderWidth: 1,
+            outerBorderWidth: 2,
+            borderSpace: border.borderSpace || size / 24,
+            outerBorderColor: processColor(color),
+            innerBorderColor: processColor('#FFF'),
+            ...border,
+        }
     }
 
     constructor(props) {
@@ -114,10 +124,6 @@ export default class AvatarImage extends React.PureComponent<Props> {
             text = user.name.charAt(0).toUpperCase();
         }
         return text || '?';
-    };
-
-    getFillColor = (user, colors) => {
-        return colors[Number(user.code) % colors.length];
     };
 
     renderDefaultAvatar = (user, index) => {
@@ -221,14 +227,6 @@ export default class AvatarImage extends React.PureComponent<Props> {
         }
     }
 
-    static processBorder(defOuterBorderColors, border, users) {
-        let color = border.outerBorderColor;
-        if (users.length === 1 && !users[0].avatar) {
-            color = defOuterBorderColors[Number(users[0].code) % defOuterBorderColors.length]
-        }
-        return {...border, outerBorderColor: processColor(color), innerBorderColor: processColor(border.innerBorderColor)}
-    }
-
     render() {
         const {size, style, renderAvatar = this.renderDefaultAvatar, defOuterBorderColors, border} = this.props;
         const {users, radius} = this.state;
@@ -236,7 +234,7 @@ export default class AvatarImage extends React.PureComponent<Props> {
             <AvatarGroup
                 {...this.props}
                 radius={radius}
-                border={AvatarImage.processBorder(defOuterBorderColors, border, users)}
+                border={AvatarImage.processBorder(size, defOuterBorderColors, border, users)}
                 style={[{width: size, height: size}, style]}
             >
                 {users.map(renderAvatar)}
