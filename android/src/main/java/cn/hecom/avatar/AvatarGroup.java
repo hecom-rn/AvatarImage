@@ -170,17 +170,17 @@ public class AvatarGroup extends ReactViewGroup {
 
     private void drawBorder(Canvas canvas) {
         borderPaint.setStyle(Paint.Style.FILL);
-        borderPaint.setColor(Color.parseColor(mBorder.getOuterBorderColor()));
+        borderPaint.setColor(mBorder.getOuterBorderColor());
         borderPaint.setAlpha(52);
         canvas.drawPath(borderPath, borderPaint);
 
         borderPaint.setStyle(Paint.Style.STROKE);
-        borderPaint.setColor(Color.parseColor(mBorder.getOuterBorderColor()));
+        borderPaint.setColor(mBorder.getOuterBorderColor());
         borderPaint.setStrokeWidth(dpToPx(mBorder.getOuterBorderWidth()));
         canvas.drawPath(borderPath, borderPaint);
 
         borderPaint.setStrokeWidth(dpToPx(mBorder.getInnerBorderWidth()));
-        borderPaint.setColor(Color.parseColor(mBorder.getInnerBorderColor()));
+        borderPaint.setColor(mBorder.getInnerBorderColor());
         canvas.drawPath(clipPath, borderPaint);
 
 

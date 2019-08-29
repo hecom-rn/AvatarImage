@@ -7,10 +7,9 @@ import com.facebook.react.bridge.ReadableMap;
  */
 public class Border {
     private float innerBorderWidth = 1;
-    private String innerBorderColor = "#FFFFFF";
+    private int innerBorderColor = 0xffffff;
     private float outerBorderWidth = 2;
-    private String outerBorderColor = "#FFFFFF";
-    private String imageBorderColor = "#F1F1F1";
+    private int outerBorderColor = 0xffffff;
     private float borderSpace = 5;
 
     public float getInnerBorderWidth() {
@@ -21,11 +20,11 @@ public class Border {
         this.innerBorderWidth = innerBorderWidth;
     }
 
-    public String getInnerBorderColor() {
+    public int getInnerBorderColor() {
         return innerBorderColor;
     }
 
-    public void setInnerBorderColor(String innerBorderColor) {
+    public void setInnerBorderColor(int innerBorderColor) {
         this.innerBorderColor = innerBorderColor;
     }
 
@@ -37,20 +36,12 @@ public class Border {
         this.outerBorderWidth = outerBorderWidth;
     }
 
-    public String getOuterBorderColor() {
+    public int getOuterBorderColor() {
         return outerBorderColor;
     }
 
-    public void setOuterBorderColor(String outerBorderColor) {
+    public void setOuterBorderColor(int outerBorderColor) {
         this.outerBorderColor = outerBorderColor;
-    }
-
-    public String getImageBorderColor() {
-        return imageBorderColor;
-    }
-
-    public void setImageBorderColor(String imageBorderColor) {
-        this.imageBorderColor = imageBorderColor;
     }
 
     public float getBorderSpace() {
@@ -67,16 +58,13 @@ public class Border {
             result.setInnerBorderWidth((float) border.getDouble("innerBorderWidth"));
         }
         if (border.hasKey("innerBorderColor")) {
-            result.setInnerBorderColor(border.getString("innerBorderColor"));
+            result.setInnerBorderColor(border.getInt("innerBorderColor"));
         }
         if (border.hasKey("outerBorderWidth")) {
             result.setOuterBorderWidth((float) border.getDouble("outerBorderWidth"));
         }
         if (border.hasKey("outerBorderColor")) {
-            result.setOuterBorderColor(border.getString("outerBorderColor"));
-        }
-        if (border.hasKey("imageBorderColor")) {
-            result.setImageBorderColor(border.getString("imageBorderColor"));
+            result.setOuterBorderColor(border.getInt("outerBorderColor"));
         }
         if (border.hasKey("borderSpace")) {
             result.setBorderSpace((float) border.getDouble("borderSpace"));
