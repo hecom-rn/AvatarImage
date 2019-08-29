@@ -30,6 +30,10 @@ export interface Props {
      */
     size: number
     /**
+     * 圆角大小
+     */
+    radius: number
+    /**
      * 分隔线宽度
      */
     sepWidth: number
