@@ -4,11 +4,11 @@
 
 这是一个正多边形头像组件，是支持群组头像。
 
-![screen]{https://github.com/hecom-cn/image-avatar/master/images/example.jpeg}
+![screen](https://github.com/hecom-rn/AvatarImage/blob/master/images/example.jpeg)
 群组头像最多支持显示四个成员。
 
-关于默认头像：
-    未设置远程头像路径时，如果名字中有中文，则获取最后一个中文字符；如果没有中文，则获取第一个字符，作为头像文字
+# 关于默认头像
+未设置远程头像路径时，如果名字中有中文，则获取最后一个中文字符；如果没有中文，则获取第一个字符，作为头像文字
 
 可用属性
 
@@ -28,16 +28,20 @@
 |border|Border|undefined|边框参数|
 
 User类型
-`interface User {
-    code: number // 编号，用于确定默认头像颜色
-    name: string // 名称
-    avatar?: string // 头像
-}`
+```
+    interface User {
+        code: number // 编号，用于确定默认头像颜色
+        name: string // 名称
+        avatar?: string // 头像
+    }
+```
 Border类型
-`interface Border{
-    innerBorderWidth?: number // 内边框宽度，默认：1
-    innerBorderColor?: string // 内边框颜色，默认：#FFFFFF
-    outerBorderWidth?: number // 外边框宽度，默认：2
-    outerBorderColor?: string // 外边框颜色，默认：#F1F1F1
-    borderSpace?: number // 内外边框间距，默认：size / 24
-}`
+```
+    interface Border {
+        innerBorderWidth?: number // 内边框宽度，默认：1
+        innerBorderColor?: string // 内边框颜色，默认：#FFFFFF
+        outerBorderWidth?: number // 外边框宽度，默认：2
+        outerBorderColor?: string // 外边框颜色，默认：#F1F1F1
+        borderSpace?: number // 内外边框间距，默认：size / 24
+    }
+```
