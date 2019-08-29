@@ -1,5 +1,6 @@
 package cn.hecom.avatar;
 
+import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.annotations.ReactProp;
 import com.facebook.react.views.view.ReactViewManager;
@@ -23,18 +24,18 @@ public class AvatarManager extends ReactViewManager {
         view.setNoOfSides(numberOfSides);
     }
 
-    @ReactProp(name = "radius", defaultInt = 2)
-    public void setRadius(AvatarGroup view, int raduis) {
+    @ReactProp(name = "radius", defaultFloat = 2f)
+    public void setRadius(AvatarGroup view, float raduis) {
         view.setRadius(raduis);
     }
 
-    @ReactProp(name = "sepWidth", defaultInt = 1)
-    public void setSepWidth(AvatarGroup view, int width) {
+    @ReactProp(name = "sepWidth", defaultFloat = 1f)
+    public void setSepWidth(AvatarGroup view, float width) {
         view.setSepWidth(width);
     }
 
-    @ReactProp(name = "rotate", defaultInt = 90)
-    public void setRotate(AvatarGroup view, int rotate) {
+    @ReactProp(name = "rotate", defaultFloat = 90)
+    public void setRotate(AvatarGroup view, float rotate) {
         view.setRotate(rotate);
     }
 
@@ -44,6 +45,6 @@ public class AvatarManager extends ReactViewManager {
     }
     @ReactProp(name = "border")
     public void setBorderProps(AvatarGroup view, ReadableMap border) {
-        
+        view.setBorder(Border.fromReadableMap(border));
     }
 }

@@ -48,6 +48,7 @@ class App extends React.Component {
                                 style={styles.avatar}
                                 radius={radius}
                                 size={size}
+                                borderEnable={true}
                                 users={[{code: 2, name: 'abc'}]}
                             />
                         </View>
@@ -58,6 +59,7 @@ class App extends React.Component {
                             <Avatar
                                 style={styles.avatar}
                                 size={size}
+                                borderEnable={true}
                                 radius={radius}
                                 users={[{
                                     code: 3,
@@ -143,7 +145,7 @@ class App extends React.Component {
 
 const styles = StyleSheet.create({
     scrollView: {
-        backgroundColor: Colors.lighter,
+        backgroundColor: Colors.white,
     },
     container: {
         marginTop: 8,

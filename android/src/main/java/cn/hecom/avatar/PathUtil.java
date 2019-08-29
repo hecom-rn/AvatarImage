@@ -1,10 +1,10 @@
 package cn.hecom.avatar;
 
-import java.util.List;
-import java.util.ArrayList;
-
 import android.graphics.Path;
 import android.graphics.PointF;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by kevin.bai on 2019-08-28. 计算过程参考{@see <a href="https://www.jianshu.com/p/edbe67f14751">博客</a>}
@@ -32,7 +32,8 @@ public class PathUtil {
         path.close();
     }
 
-    private static void calculatePathWithCorner(Path path, PointF center, int side, float size, float corner, float offset) {
+    private static void calculatePathWithCorner(Path path, PointF center, int side, float size, float corner,
+                                                float offset) {
         List<PointF> points = regularPolygonCoordinatesWithRoundedCorner(center, side, size, corner, offset);
         PointF temPoint = null;
         for (int i = 0; i < points.size(); i++) {

@@ -29,6 +29,7 @@ export interface Props {
      * 默认头像背景色
      */
     colors: string[]
+    defOuterBorderColors: string[]
     /**
      * 自定义头像绘制方法
      * @param {User} user
@@ -53,8 +54,7 @@ export interface Props {
         innerBorderWidth: number
         innerBorderColor: string
         outerBorderWidth: number
-        defOuterBorderColors: string[]
-        imageBorderColor: string
+        outerBorderColor: string
         borderSpace: number
     }
 }
@@ -62,19 +62,20 @@ export interface Props {
 export default class AvatarImage extends React.PureComponent<Props> {
     static defaultProps = {
         colors: ['#3EAAFF', '#47C2E7', '#FD6364', '#FDC63F', '#BEE15D', '#28D9C1', '#FF9D50'],
+        defOuterBorderColors: ['#CBE7FF', '#DAF6FF', '#FFE1E1', '#FCF1D8', '#E6F5BE', '#D3F9F4', '#FFE4CD'],
         size: 48,
         radius: 2,
         sepWidth: 1,
+        color: '#FF9D50',
         users: [],
         numberOfSides: 6,
-        rotate: 0,
+        rotate: 90,
         borderEnable: false,
         border: {
-            innerBorderWidth: StyleSheet.hairlineWidth,
+            innerBorderWidth: 1,
             innerBorderColor: '#FFFFFF',
             outerBorderWidth: 2,
-            defOuterBorderColors: ['#FFE4CD','#CBE7FF','#DAF6FF','#FFE1E1','#E6F5BE','#D3F9F4','#FCF1D8'],
-            imageBorderColor: '#F1F1F1',
+            outerBorderColor: '#F1F1F1',
             borderSpace: 5
         },
     };
@@ -118,24 +119,6 @@ export default class AvatarImage extends React.PureComponent<Props> {
 
     getFillColor = (user, colors) => {
         return colors[Number(user.code) % colors.length];
-    };
-
-    borderWapper = () => {
-        const {size, colors, style, renderAvatar = this.renderDefaultAvatar} = this.props;
-        const {users} = this.state;
-        const fristUser = users && users.length > 0 && users[0];
-        if (!fristUser) {
-            return <View />;
-        }
-        const colorName = this.getFillColor(fristUser, colors);
-        const source = fristUser.avatar ? require('./image/gray.png') : textBorder[colorName];
-        return (
-            <ImageBackground source={source} style={[style]}>
-                <AvatarGroup {...this.props} style={[{width: size, height: size, margin: 13}]}>
-                    {users.map(renderAvatar)}
-                </AvatarGroup>
-            </ImageBackground>
-        );
     };
 
     renderDefaultAvatar = (user, index) => {
@@ -239,11 +222,23 @@ export default class AvatarImage extends React.PureComponent<Props> {
         }
     }
 
+    static processBorder(defOuterBorderColors, border, users) {
+        let color = border.outerBorderColor;
+        if (users.length === 1 && !users[0].avatar) {
+            color = defOuterBorderColors[Number(users[0].code) % defOuterBorderColors.length]
+        }
+        return {...border, outerBorderColor: color}
+    }
+
     render() {
-        const {size, style, renderAvatar = this.renderDefaultAvatar} = this.props;
+        const {size, style, renderAvatar = this.renderDefaultAvatar, defOuterBorderColors, border} = this.props;
         const {users} = this.state;
         return (
-            <AvatarGroup {...this.props} style={[{width: size, height: size}, style]}>
+            <AvatarGroup
+                {...this.props}
+                border={AvatarImage.processBorder(defOuterBorderColors, border, users)}
+                style={[{width: size, height: size}, style]}
+            >
                 {users.map(renderAvatar)}
             </AvatarGroup>
         );
