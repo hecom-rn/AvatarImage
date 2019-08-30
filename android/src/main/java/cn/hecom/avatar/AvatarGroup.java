@@ -1,6 +1,7 @@
 package cn.hecom.avatar;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -35,8 +36,7 @@ public class AvatarGroup extends ReactViewGroup {
     private final Paint clipPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     private Path rectView = new Path();
-
-    protected PorterDuffXfermode pdMode = new PorterDuffXfermode(PorterDuff.Mode.DST_OUT);
+    private Bitmap clipBitmap;
 
     private PointF center = new PointF();
 
@@ -73,7 +73,7 @@ public class AvatarGroup extends ReactViewGroup {
             clipPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
             setLayerType(LAYER_TYPE_SOFTWARE, clipPaint);
         } else {
-            clipPaint.setXfermode(pdMode);
+            clipPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
             setLayerType(LAYER_TYPE_SOFTWARE, null);
         }
     }
@@ -134,13 +134,18 @@ public class AvatarGroup extends ReactViewGroup {
 
         drawSep(canvas);
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.O_MR1) {
-            canvas.drawPath(clipPath, clipPaint);
+            canvas.drawBitmap(clipBitmap, 0, 0, clipPaint);
+//            canvas.drawPath(clipPath, clipPaint);
         } else {
             canvas.drawPath(rectView, clipPaint);
         }
 
         if (useBorder && mBorder != null) {
             drawBorder(canvas);
+        }
+
+        if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.O_MR1) {
+            setLayerType(LAYER_TYPE_HARDWARE, null);
         }
     }
 
@@ -155,6 +160,18 @@ public class AvatarGroup extends ReactViewGroup {
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O_MR1) {
             rectView.op(clipPath, Path.Op.DIFFERENCE);
+        } else {
+            if (clipBitmap != null) {
+                clipBitmap.recycle();
+            }
+            clipBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            final Canvas canvas = new Canvas(clipBitmap);
+            Paint p = new Paint();
+            p.setColor(Color.BLACK);
+            p.setAntiAlias(true);
+            p.setStyle(Paint.Style.FILL);
+            p.setStrokeWidth(1);
+            canvas.drawPath(clipPath, p);
         }
     }
 
@@ -170,20 +187,18 @@ public class AvatarGroup extends ReactViewGroup {
 
     private void drawBorder(Canvas canvas) {
         borderPaint.setStyle(Paint.Style.FILL);
-        borderPaint.setColor(Color.parseColor(mBorder.getOuterBorderColor()));
+        borderPaint.setColor(mBorder.getOuterBorderColor());
         borderPaint.setAlpha(52);
         canvas.drawPath(borderPath, borderPaint);
 
         borderPaint.setStyle(Paint.Style.STROKE);
-        borderPaint.setColor(Color.parseColor(mBorder.getOuterBorderColor()));
+        borderPaint.setColor(mBorder.getOuterBorderColor());
         borderPaint.setStrokeWidth(dpToPx(mBorder.getOuterBorderWidth()));
         canvas.drawPath(borderPath, borderPaint);
 
         borderPaint.setStrokeWidth(dpToPx(mBorder.getInnerBorderWidth()));
-        borderPaint.setColor(Color.parseColor(mBorder.getInnerBorderColor()));
+        borderPaint.setColor(mBorder.getInnerBorderColor());
         canvas.drawPath(clipPath, borderPaint);
-
-
     }
 
     private void drawSep(Canvas canvas) {
