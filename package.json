@@ -6,7 +6,7 @@
   "scripts": {},
   "repository": {
     "type": "git",
-    "url": "git@gitlab.com:hecom/image-avatar.git"
+    "url": "https://github.com/hecom-rn/AvatarImage.git"
   },
   "author": "Xiaosong Gao",
   "license": "MIT",

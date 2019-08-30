@@ -127,7 +127,12 @@ export default class AvatarImage extends React.PureComponent<Props> {
         if (user.avatar) {
             const {fontWeight, fontSize, lineHeight, ...others} = AvatarImage.getTextStyle(size, users.length, index);
             return (
-                <Image key={index} style={others} source={{uri: getThumbUrl(user.avatar)}} />
+                <Image 
+                    key={index} 
+                    style={others} 
+                    source={{uri: getThumbUrl(user.avatar)}} 
+                    defaultSource={require('./image/Placeholder.png')}
+                />
             );
         } else {
             return (
