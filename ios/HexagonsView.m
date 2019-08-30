@@ -13,6 +13,7 @@
     NSInteger _sepWidth;
     NSInteger _userLength;
     BOOL _isUpdate;
+    NSInteger _numberOfSides;
  
     // border style
     BOOL _borderEnable;
@@ -35,9 +36,10 @@
         _isUpdate = NO;
         _borderEnable = YES;
         _filletDegree = 5;
-        _innerBorderColor = [UIColor redColor];
+        _numberOfSides = 6;
+        _innerBorderColor = [UIColor whiteColor];
         _innerBorderWidth = 1;
-        _borderColor = [UIColor blueColor];
+        _borderColor = [UIColor whiteColor];
         _borderSpace = 5;
         _borderWidth = 2;
     }
@@ -50,6 +52,10 @@
     _filletDegree = radius;
 }
 
+- (void)numberOfSides:(NSInteger)numberOfSides {
+    _numberOfSides = numberOfSides;
+}
+    
 - (void)setBorderEnable:(BOOL)borderEnable{
     _borderEnable = borderEnable;
 }
@@ -140,7 +146,7 @@
 #pragma mark - generate path
 - (CGPathRef)drawPathWith:(CGFloat)size {
     UIBezierPath *path = [UIBezierPath bezierPath];
-    NSArray *points = [self regularPolygonCoordinatesWithRoundedCorner:6 radius:size/2 offset:M_PI_2];
+    NSArray *points = [self regularPolygonCoordinatesWithRoundedCorner:_numberOfSides radius:size/2 offset:M_PI_2];
     for (int i = 0; i < points.count; i++) {
         CGPoint point = [points[i] CGPointValue];
         CGPoint tempPoint;
