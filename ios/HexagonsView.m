@@ -91,8 +91,13 @@
     CGFloat size = _borderEnable ? _size - _borderWidth - 2 * _borderSpace - _innerBorderWidth : _size;
     CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
     maskLayer.path = [self drawPathWith:size];
-    layer.mask  = maskLayer;
-    
+    BOOL canClipLayer = layer.sublayers.count == 1;
+    if (canClipLayer) {
+        layer.sublayers[0].mask = maskLayer;
+    } else {
+        layer.mask = maskLayer;
+    }
+
     // clip when subViews count equal to 3
     if (layer.sublayers.count == 3) {
         float sideLength = _size/2;
@@ -121,7 +126,7 @@
     }
     [layer addSublayer:speLayer];
     
-    if (_borderEnable) {
+    if (_borderEnable && canClipLayer) {
         CAShapeLayer *innerBorderLayer = [[CAShapeLayer alloc] init];
         innerBorderLayer.zPosition = 200;
         innerBorderLayer.path = [self drawPathWith:size];
@@ -132,12 +137,11 @@
         
         CAShapeLayer *borderLayer = [[CAShapeLayer alloc] init];
         borderLayer.zPosition = 201;
-        borderLayer.frame = layer.frame;
-        borderLayer.path = [self drawPathWith: size + 10];
+        borderLayer.path = [self drawPathWith: _size];
         borderLayer.lineWidth = _borderWidth;
         borderLayer.fillColor = nil;
         borderLayer.strokeColor = _borderColor.CGColor;
-        [layer.superlayer addSublayer:borderLayer];
+        [layer addSublayer:borderLayer];
     }
     
     _isUpdate = YES;
