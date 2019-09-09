@@ -52,7 +52,7 @@
     _filletDegree = radius;
 }
 
-- (void)numberOfSides:(NSInteger)numberOfSides {
+- (void)setNumberOfSides:(NSInteger)numberOfSides {
     _numberOfSides = numberOfSides;
 }
     
