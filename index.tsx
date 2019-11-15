@@ -125,7 +125,7 @@ export default class AvatarImage extends React.PureComponent<Props> {
             const matchs = user.name.match(/[\u4e00-\u9fa5]/g);
             text = matchs[matchs.length - 1];
         } else {
-            text = user.name.charAt(0).toUpperCase();
+            text = user.name && user.name.charAt(0).toUpperCase();
         }
         return text || '?';
     };
