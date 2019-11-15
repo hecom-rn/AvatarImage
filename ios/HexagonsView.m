@@ -13,6 +13,7 @@
     NSInteger _sepWidth;
     NSInteger _userLength;
     BOOL _isUpdate;
+    NSInteger _numberOfSides;
  
     // border style
     BOOL _borderEnable;
@@ -35,9 +36,10 @@
         _isUpdate = NO;
         _borderEnable = YES;
         _filletDegree = 5;
-        _innerBorderColor = [UIColor redColor];
+        _numberOfSides = 6;
+        _innerBorderColor = [UIColor whiteColor];
         _innerBorderWidth = 1;
-        _borderColor = [UIColor blueColor];
+        _borderColor = [UIColor whiteColor];
         _borderSpace = 5;
         _borderWidth = 2;
     }
@@ -50,6 +52,10 @@
     _filletDegree = radius;
 }
 
+- (void)setNumberOfSides:(NSInteger)numberOfSides {
+    _numberOfSides = numberOfSides;
+}
+    
 - (void)setBorderEnable:(BOOL)borderEnable{
     _borderEnable = borderEnable;
 }
@@ -85,8 +91,13 @@
     CGFloat size = _borderEnable ? _size - _borderWidth - 2 * _borderSpace - _innerBorderWidth : _size;
     CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
     maskLayer.path = [self drawPathWith:size];
-    layer.mask  = maskLayer;
-    
+    BOOL canClipLayer = layer.sublayers.count == 1;
+    if (canClipLayer) {
+        layer.sublayers[0].mask = maskLayer;
+    } else {
+        layer.mask = maskLayer;
+    }
+
     // clip when subViews count equal to 3
     if (layer.sublayers.count == 3) {
         float sideLength = _size/2;
@@ -115,7 +126,7 @@
     }
     [layer addSublayer:speLayer];
     
-    if (_borderEnable) {
+    if (_borderEnable && canClipLayer) {
         CAShapeLayer *innerBorderLayer = [[CAShapeLayer alloc] init];
         innerBorderLayer.zPosition = 200;
         innerBorderLayer.path = [self drawPathWith:size];
@@ -126,12 +137,11 @@
         
         CAShapeLayer *borderLayer = [[CAShapeLayer alloc] init];
         borderLayer.zPosition = 201;
-        borderLayer.frame = layer.frame;
-        borderLayer.path = [self drawPathWith: size + 10];
+        borderLayer.path = [self drawPathWith: _size];
         borderLayer.lineWidth = _borderWidth;
         borderLayer.fillColor = nil;
         borderLayer.strokeColor = _borderColor.CGColor;
-        [layer.superlayer addSublayer:borderLayer];
+        [layer addSublayer:borderLayer];
     }
     
     _isUpdate = YES;
@@ -140,7 +150,7 @@
 #pragma mark - generate path
 - (CGPathRef)drawPathWith:(CGFloat)size {
     UIBezierPath *path = [UIBezierPath bezierPath];
-    NSArray *points = [self regularPolygonCoordinatesWithRoundedCorner:6 radius:size/2 offset:M_PI_2];
+    NSArray *points = [self regularPolygonCoordinatesWithRoundedCorner:_numberOfSides radius:size/2 offset:M_PI_2];
     for (int i = 0; i < points.count; i++) {
         CGPoint point = [points[i] CGPointValue];
         CGPoint tempPoint;
