@@ -25,7 +25,7 @@
 |renderAvatar|func|undefined|自定义头像渲染方法|
 |getThumbUrl|func|undefined|`(url:string)=> string`,获取缩略图方法|
 |numberOfSides|number|6|正多边形边数|
-|borderEnable|boolean|false|是否使用边框( iOS 使用该参数时，子元素只能有一个)|
+|borderEnable|boolean|false|是否使用边框|
 |border|Border|undefined|边框参数|
 
 User类型

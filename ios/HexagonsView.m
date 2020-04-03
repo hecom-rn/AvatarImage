@@ -1,12 +1,17 @@
 //
 //  HexagonsView.m
-//  
+//
 //
 //  Created by ms on 2019/8/1.
 //
 
 #import "HexagonsView.h"
 #import <React/RCTConvert.h>
+
+@interface HexagonsView ()
+@property (nonatomic, strong) NSMutableArray *layerArrM;
+@property (nonatomic, strong) UIView *borderView;
+@end
 
 @implementation HexagonsView {
     NSInteger _size;
@@ -42,6 +47,9 @@
         _borderColor = [UIColor whiteColor];
         _borderSpace = 5;
         _borderWidth = 2;
+        self.borderView = [[UIView alloc] init];
+        self.borderView.backgroundColor = [UIColor clearColor];
+        [self addSubview:self.borderView];
     }
     return self;
 }
@@ -70,6 +78,7 @@
 
 - (void)setSize:(NSInteger)size {
     _size = size;
+    self.borderView.frame = CGRectMake(0, 0, size, size);
 }
 
 - (void)setSepWidth:(NSInteger)sepWidth {
@@ -85,48 +94,59 @@
     _userLength = users.count;
 }
 
+- (void)addSubview:(UIView *)view {
+    if (view == self.borderView) {
+        [super addSubview:view];
+    } else {
+        [self.borderView addSubview:view];
+    }
+}
+
+- (void)layoutSubviews {
+    // clip when subViews count equal to 3
+    if (_userLength == 3) {
+        for (UIView *view in self.borderView.subviews) {
+            if ((CGRectGetMaxY(view.frame) - CGRectGetHeight(view.frame) / 2) > _size / 2) {
+                float sideLength = _size/2;
+                CGFloat utilAngle = M_PI / 3;
+                float xOffset = sideLength;
+                float yOffset = 0;
+                CALayer *tempLayer = view.layer;
+                UIBezierPath *path = [UIBezierPath bezierPath];
+                [path moveToPoint:CGPointMake(cos(utilAngle * 1.5) * sideLength + xOffset, yOffset)];
+                [path addLineToPoint:CGPointMake(cos(utilAngle * 0.5) * sideLength + xOffset, sin(utilAngle * 0.5) * sideLength + yOffset)];
+                [path addLineToPoint:CGPointMake(cos(utilAngle * 1.5) * sideLength + xOffset, sin(utilAngle * 1.5) * sideLength + yOffset)];
+                [path addLineToPoint:CGPointMake(cos(utilAngle * 2.5) * sideLength + xOffset, sin(utilAngle * 2.5) * sideLength + yOffset)];
+                CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
+                maskLayer.path = path.CGPath;
+                tempLayer.mask = maskLayer;
+                for (UIView *sub in view.subviews) {
+                    maskLayer = [[CAShapeLayer alloc] init];
+                    maskLayer.path = path.CGPath;
+                    sub.layer.mask = maskLayer;
+                }
+            }
+        }
+    }
+}
+
 #pragma mark - delegate
 - (void)displayLayer:(CALayer *)layer {
     // clip content
+    for (CAShapeLayer *layer in self.layerArrM) {
+        [layer removeFromSuperlayer];
+    }
     CGFloat size = _borderEnable ? _size - _borderWidth - 2 * _borderSpace - _innerBorderWidth : _size;
     CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
     maskLayer.path = [self drawPathWith:size];
-    BOOL canClipLayer = layer.sublayers.count == 1;
-    if (canClipLayer) {
-        layer.sublayers[0].mask = maskLayer;
-    } else {
-        layer.mask = maskLayer;
-    }
-
-    // clip when subViews count equal to 3
-    if (layer.sublayers.count == 3) {
-        float sideLength = _size/2;
-        CGFloat utilAngle = M_PI / 3;
-        float xOffset = sideLength;
-        float yOffset = 0;
-        CALayer *tempLayer = layer.sublayers[2];
-        UIBezierPath *path = [UIBezierPath bezierPath];
-        [path moveToPoint:CGPointMake(cos(utilAngle * 1.5) * sideLength + xOffset, yOffset)];
-        [path addLineToPoint:CGPointMake(cos(utilAngle * 0.5) * sideLength + xOffset, sin(utilAngle * 0.5) * sideLength + yOffset)];
-        [path addLineToPoint:CGPointMake(cos(utilAngle * 1.5) * sideLength + xOffset, sin(utilAngle * 1.5) * sideLength + yOffset)];
-        [path addLineToPoint:CGPointMake(cos(utilAngle * 2.5) * sideLength + xOffset, sin(utilAngle * 2.5) * sideLength + yOffset)];
-        CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
-        maskLayer.path = path.CGPath;
-        tempLayer.mask = maskLayer;
-    }
+    [self.layerArrM addObject:maskLayer];
+    self.borderView.layer.mask = maskLayer;
     
     // add speline
-    CALayer *speLayer;
-    if (_isUpdate) {
-//       [layer.sublayers makeObjectsPerformSelector:@selector(removeFromSuperlayer)];
-         [self hiddenAllSublayers:layer];
-        speLayer = [self generateSepLine: _userLength > 4 ? 4 : _userLength];
-    } else {
-        speLayer = [self generateSepLine: layer.sublayers.count];
-    }
+    CALayer *speLayer = [self generateSepLine: _userLength > 4 ? 4 : _userLength];
     [layer addSublayer:speLayer];
     
-    if (_borderEnable && canClipLayer) {
+    if (_borderEnable) {
         CAShapeLayer *innerBorderLayer = [[CAShapeLayer alloc] init];
         innerBorderLayer.zPosition = 200;
         innerBorderLayer.path = [self drawPathWith:size];
@@ -279,8 +299,15 @@
         [layer addSublayer: layer1];
         
     }
+    [self.layerArrM addObject:layer];
     return layer;
 }
 
+- (NSMutableArray *)layerArrM {
+    if (!_layerArrM) {
+        _layerArrM = [[NSMutableArray alloc] init];
+    }
+    return _layerArrM;
+}
 
 @end
