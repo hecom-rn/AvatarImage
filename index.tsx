@@ -130,7 +130,7 @@ export default class AvatarImage extends React.PureComponent<Props> {
         return text || '?';
     };
 
-    renderDefaultAvatar = (user, index) => {
+    renderDefaultAvatar = (isGroup, user, index) => {
         const {size, colors, getThumbUrl = this.getThumbUrl} = this.props;
         const {users} = this.state;
         if (user.avatar) {
@@ -141,6 +141,7 @@ export default class AvatarImage extends React.PureComponent<Props> {
                     style={others} 
                     source={{uri: getThumbUrl(user.avatar)}} 
                     defaultSource={require('./image/Placeholder.png')}
+                    backgroundColor = {isGroup ? '#999999' : 'transparent'}
                 />
             );
         } else {
@@ -239,6 +240,7 @@ export default class AvatarImage extends React.PureComponent<Props> {
     render() {
         const {size, style, renderAvatar = this.renderDefaultAvatar, defOuterBorderColors, border} = this.props;
         const {users, radius} = this.state;
+        const isGroup = users.length > 1;
         return (
             <AvatarGroup
                 {...this.props}
@@ -246,7 +248,7 @@ export default class AvatarImage extends React.PureComponent<Props> {
                 border={AvatarImage.processBorder(size, defOuterBorderColors, border, users)}
                 style={[{width: size, height: size}, style]}
             >
-                {users.map(renderAvatar)}
+                {users.map(renderAvatar.bind(this, isGroup))}
             </AvatarGroup>
         );
     }
