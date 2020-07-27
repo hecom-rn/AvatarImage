@@ -11,7 +11,6 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.support.annotation.NonNull;
 import android.view.View;
 
 import com.facebook.react.views.view.ReactViewGroup;
@@ -40,7 +39,7 @@ public class AvatarGroup extends ReactViewGroup {
 
     private PointF center = new PointF();
 
-    public AvatarGroup(@NonNull Context context) {
+    public AvatarGroup(Context context) {
         super(context);
         init();
     }
