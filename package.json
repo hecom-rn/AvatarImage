@@ -11,11 +11,14 @@
     "type": "git",
     "url": "https://github.com/hecom-rn/AvatarImage.git"
   },
-  "author": "Xiaosong Gao",
+  "author": "summer88123",
   "license": "MIT",
-  "dependencies": {},
   "peerDependencies": {
     "react-native": ">=0.33"
+  },
+  "devDependencies":{
+    "react": "^16.13.1",
+    "react-native": "^0.63.2"
   },
   "homepage": "https://github.com/hecom-rn/AvatarImage#readme"
 }

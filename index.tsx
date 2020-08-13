@@ -1,5 +1,5 @@
 import React from 'react';
-import {Image, ImageBackground, Platform, processColor, StyleSheet, Text, View} from 'react-native';
+import {Image, Platform, processColor, Text} from 'react-native';
 import AvatarGroup from './AvatarGroup';
 
 export interface User {
@@ -65,7 +65,12 @@ export interface Props {
     border?: Border
 }
 
-export default class AvatarImage extends React.PureComponent<Props> {
+interface State {
+    users: User[]
+    radius: number
+}
+
+export default class AvatarImage extends React.PureComponent<Props, State> {
     static defaultProps = {
         colors: ['#3EAAFF', '#47C2E7', '#FD6364', '#FDC63F', '#BEE15D', '#28D9C1', '#FF9D50'],
         defOuterBorderColors: ['#CBE7FF', '#DAF6FF', '#FFE1E1', '#FCF1D8', '#E6F5BE', '#D3F9F4', '#FFE4CD'],
@@ -110,7 +115,9 @@ export default class AvatarImage extends React.PureComponent<Props> {
         }
     }
 
-    constructor(props) {
+    state: State;
+
+    constructor(props: Props) {
         super(props);
         this.state = AvatarImage.convertProp(props)
     }
@@ -136,12 +143,12 @@ export default class AvatarImage extends React.PureComponent<Props> {
         if (user.avatar) {
             const {fontWeight, fontSize, lineHeight, ...others} = AvatarImage.getTextStyle(size, users.length, index);
             return (
-                <Image 
-                    key={index} 
-                    style={others} 
-                    source={{uri: getThumbUrl(user.avatar)}} 
+                <Image
+                    key={index}
+                    style={others}
+                    source={{uri: getThumbUrl(user.avatar)}}
                     defaultSource={require('./image/Placeholder.png')}
-                    backgroundColor = {isGroup ? '#999999' : 'transparent'}
+                    backgroundColor={isGroup ? '#999999' : 'transparent'}
                 />
             );
         } else {
@@ -244,6 +251,7 @@ export default class AvatarImage extends React.PureComponent<Props> {
         return (
             <AvatarGroup
                 {...this.props}
+                key={users.map(user => user.name).join('')}
                 radius={radius}
                 border={AvatarImage.processBorder(size, defOuterBorderColors, border, users)}
                 style={[{width: size, height: size}, style]}
