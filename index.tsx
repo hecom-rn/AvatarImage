@@ -153,7 +153,7 @@ export default class AvatarImage extends React.PureComponent<Props, State> {
             );
         } else {
             return (
-                <Text key={index} style={[{
+                <Text key={index} allowFontScaling={false} style={[{
                     color: 'white',
                     backgroundColor: colors[Number(user.code) % colors.length],
                     textAlign: 'center',
