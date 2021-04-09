@@ -20,48 +20,48 @@ export interface Props {
     /**
      * 员工，如果users有值则无效
      */
-    user: User
+    user?: User
     /**
      * 群头像员工列表，优先于user属性
      */
-    users: User[]
+    users?: User[]
     /**
      * 视图大小，正六边形的直径
      */
-    size: number
+    size?: number
     /**
      * 圆角大小
      */
-    radius: number
+    radius?: number
     /**
      * 分隔线宽度
      */
-    sepWidth: number
+    sepWidth?: number
     /**
      * 默认头像背景色
      */
-    colors: string[]
-    defOuterBorderColors: string[]
+    colors?: string[]
+    defOuterBorderColors?: string[]
     /**
      * 自定义头像绘制方法
      * @param {User} user
      * @returns {React.Element}
      */
-    renderAvatar: (user: User) => React.Element
+    renderAvatar?: (user: User) => React.Element
     /**
      * 缩略图
      * @param {string} url
      * @returns {string}
      */
-    getThumbUrl: (url: string) => string
+    getThumbUrl?: (url: string) => string
     /**
      * 正多边形边数，默认6
      */
-    numberOfSides: number
+    numberOfSides?: number
     /**
      * 是否使用边框
      */
-    borderEnable: boolean
+    borderEnable?: boolean
     border?: Border
 }
 
