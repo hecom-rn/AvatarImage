@@ -1,6 +1,6 @@
 {
   "name": "@hecom/image-avatar",
-  "version": "2.0.9",
+  "version": "2.0.10",
   "description": "Avatar Image Component",
   "main": "index.tsx",
   "scripts": {
