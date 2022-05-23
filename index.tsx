@@ -170,8 +170,7 @@ export default class AvatarImage extends React.PureComponent<Props, State> {
             right, bottom, fontWeight, position = 'absolute', lineHeight;
         const padding = size / 2 * (1 - Math.sin(Math.PI * 2 / 6));
         if (count === 1) {
-            fontSize = size / 3;
-            fontWeight = 'bold';
+            fontSize = size * 5 / 12;
             width = size;
             height = size;
         } else if (count === 2) {
@@ -187,7 +186,7 @@ export default class AvatarImage extends React.PureComponent<Props, State> {
             }
         } else if (count === 3) {
             fontWeight = 'bold';
-            fontSize = size * 10 / 48;
+            fontSize = size * 10 / 35;
             if (index === 0) {
                 width = size / 2;
                 height = size * 0.75;
@@ -205,7 +204,7 @@ export default class AvatarImage extends React.PureComponent<Props, State> {
             }
         } else {
             fontWeight = 'bold';
-            fontSize = size * 10 / 48;
+            fontSize = size * 10 / 40;
             width = size / 2;
             height = size / 2;
             if (index % 2 === 0) {
