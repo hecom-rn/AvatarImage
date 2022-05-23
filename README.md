@@ -1,7 +1,7 @@
 # AvatarImage
 
 [![npm version](https://img.shields.io/npm/v/@hecom/image-avatar.svg?style=flat)](https://www.npmjs.com/package/@hecom/image-avatar)
-[![Build Status](https://travis-ci.org/hecom-rn/AvatarImage.svg?branch=master)](https://travis-ci.org/hecom-rn/AvatarImage)
+[![Build Status](https://app.travis-ci.com/hecom-rn/AvatarImage.svg?branch=master)](https://app.travis-ci.com/hecom-rn/AvatarImage)
 
 这是一个正多边形头像组件，是支持群组头像。
 
