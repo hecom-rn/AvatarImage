@@ -63,6 +63,12 @@ export interface Props {
      */
     borderEnable?: boolean
     border?: Border
+
+    /**
+     * 超过两人的群组是否使用图片
+     * 默认false，无论有无头像都直接显示文字
+     */
+    useAvatarGroup: boolean
 }
 
 interface State {
@@ -81,6 +87,7 @@ export default class AvatarImage extends React.PureComponent<Props, State> {
         numberOfSides: 6,
         rotate: 90,
         borderEnable: false,
+        useAvatarGroup: false
     };
 
     static getDerivedStateFromProps(nextProp) {
@@ -138,9 +145,9 @@ export default class AvatarImage extends React.PureComponent<Props, State> {
     };
 
     renderDefaultAvatar = (isGroup, user, index) => {
-        const {size, colors, getThumbUrl = this.getThumbUrl} = this.props;
+        const {size, colors, getThumbUrl = this.getThumbUrl, useAvatarGroup} = this.props;
         const {users} = this.state;
-        if (user.avatar) {
+        if (user.avatar && ((isGroup && useAvatarGroup) || !isGroup)) {
             const {fontWeight, fontSize, lineHeight, ...others} = AvatarImage.getTextStyle(size, users.length, index);
             return (
                 <Image
