@@ -259,28 +259,27 @@ export default class AvatarImage extends React.PureComponent<Props, State> {
         const isGroup = users.length > 1;
         const {fontWeight, fontSize, lineHeight, ...others} = AvatarImage.getTextStyle(size, users.length, 0);
 
-        // TODO 等华为把react-native-svg适配好之后，放开注释即可
-        // if (isGroup) {
-        //     return renderGroupIcon(users, size, fontSize, 4, borderEnable, size / 8);
-        // } else if (users?.[0].avatar) {
-        //     return renderSixCornerImage(getThumbUrl(users[0].avatar), size, 4, borderEnable, size / 8);
-        // } else if (users?.[0]) {
-        //     return renderSixCornerText(users[0], size, fontSize, 4, borderEnable, size / 8);
+        if (isGroup) {
+            return renderGroupIcon(users, size, fontSize, 4, borderEnable, size / 8);
+        } else if (users?.[0].avatar) {
+            return renderSixCornerImage(getThumbUrl(users[0].avatar), size, 4, borderEnable, size / 8);
+        } else if (users?.[0]) {
+            return renderSixCornerText(users[0], size, fontSize, 4, borderEnable, size / 8);
 
-        // } else {
-        //     return <View />;
-        // }
+        } else {
+            return <View />;
+        }
 
-        return (
-            <AvatarGroup
-                {...this.props}
-                key={users.map(user => user.name).join('')}
-                radius={radius}
-                border={AvatarImage.processBorder(size, defOuterBorderColors, border, users)}
-                style={[{width: size, height: size}, style]}
-            >
-                {users.map(renderAvatar.bind(this, isGroup))}
-            </AvatarGroup>
-        );
+        // return (
+        //     <AvatarGroup
+        //         {...this.props}
+        //         key={users.map(user => user.name).join('')}
+        //         radius={radius}
+        //         border={AvatarImage.processBorder(size, defOuterBorderColors, border, users)}
+        //         style={[{width: size, height: size}, style]}
+        //     >
+        //         {users.map(renderAvatar.bind(this, isGroup))}
+        //     </AvatarGroup>
+        // );
     }
 }
