@@ -115,17 +115,17 @@ function renderTwoIcon(
 
     const path1 = `M ${points[0].x}, ${points[0].y}, Q ${points[1].x}, ${points[1].y}, ${
         points[2].x
-    }, ${points[2].y}, L ${(points[3].x + points[5].x) / 2}, ${
-        (points[3].y + points[5].y) / 2
-    },  L ${(points[12].x + points[14].x) / 2}, ${(points[12].y + points[14].y) / 2}, L ${
+    }, ${points[2].y}, L ${points[4].x}, ${
+        points[4].y
+    },  L ${points[13].x}, ${points[13].y}, L ${
         points[15].x
     }, ${points[15].y},  Q ${points[16].x}, ${points[16].y}, ${points[17].x}, ${points[17].y}, Z`;
 
     const path2 = `M  ${points[9].x}, ${points[9].y}, Q ${points[10].x}, ${points[10].y}, ${
         points[11].x
-    }, ${points[11].y}, L ${(points[12].x + points[14].x) / 2}, ${
-        (points[12].y + points[14].y) / 2
-    },  L ${(points[3].x + points[5].x) / 2}, ${(points[3].y + points[5].y) / 2}, L ${
+    }, ${points[11].y}, L ${points[13].x}, ${
+        points[13].y
+    },  L ${points[4].x}, ${points[4].y}, L ${
         points[6].x
     }, ${points[6].y},  Q ${points[7].x}, ${points[7].y}, ${points[8].x}, ${points[8].y},  Z`;
 
@@ -151,14 +151,14 @@ function renderTwoIcon(
             {renderLine(
                 centerX,
                 centerY,
-                (points[3].x + points[5].x) / 2,
-                (points[3].y + points[5].y) / 2
+                points[4].x,
+                points[4].y
             )}
             {renderLine(
                 centerX,
                 centerY,
-                (points[12].x + points[14].x) / 2,
-                (points[12].y + points[14].y) / 2
+                points[13].x ,
+                points[13].y
             )}
 
             {renderSvgText(
@@ -306,11 +306,9 @@ function renderFourIcon(
         (points[0].y + points[17].y) / 2
     }, L ${points[0].x}, ${points[0].y}, Q ${points[1].x}, ${points[1].y}, ${points[2].x}, ${
         points[2].y
-    } L ${(points[3].x + points[5].x) / 2}, ${(points[3].y + points[5].y) / 2} Z`;
+    } L ${points[4].x}, ${points[4].y} Z`;
 
-    const path2 = `M ${centerX}, ${centerY} L ${(points[3].x + points[5].x) / 2}, ${
-        (points[3].y + points[5].y) / 2
-    }, L ${points[6].x}, ${points[6].y}, Q ${points[7].x}, ${points[7].y}, ${points[8].x}, ${
+    const path2 = `M ${centerX}, ${centerY} L ${points[4].x}, ${points[4].y}, L ${points[6].x}, ${points[6].y}, Q ${points[7].x}, ${points[7].y}, ${points[8].x}, ${
         points[8].y
     } L ${(points[8].x + points[9].x) / 2}, ${(points[8].y + points[9].y) / 2} Z`;
 
@@ -318,11 +316,9 @@ function renderFourIcon(
         (points[8].y + points[9].y) / 2
     }, L ${points[9].x}, ${points[9].y}, Q ${points[10].x}, ${points[10].y}, ${points[11].x}, ${
         points[11].y
-    } L ${(points[12].x + points[14].x) / 2}, ${(points[12].y + points[14].y) / 2} Z`;
+    } L ${points[13].x}, ${points[13].y} Z`;
 
-    const path4 = `M  ${centerX}, ${centerY} L ${(points[12].x + points[14].x) / 2}, ${
-        (points[12].y + points[14].y) / 2
-    }, L ${points[15].x}, ${points[15].y}, Q ${points[16].x}, ${points[16].y}, ${points[17].x}, ${
+    const path4 = `M  ${centerX}, ${centerY} L ${points[13].x}, ${points[13].y}, L ${points[15].x}, ${points[15].y}, Q ${points[16].x}, ${points[16].y}, ${points[17].x}, ${
         points[17].y
     } L ${(points[0].x + points[17].x) / 2}, ${(points[0].y + points[17].y) / 2}  Z`;
 
@@ -361,14 +357,14 @@ function renderFourIcon(
             {renderLine(
                 centerX,
                 centerY,
-                (points[3].x + points[5].x) / 2,
-                (points[3].y + points[5].y) / 2
+                points[4].x,
+                points[4].y
             )}
             {renderLine(
                 centerX,
                 centerY,
-                (points[12].x + points[14].x) / 2,
-                (points[12].y + points[14].y) / 2
+                points[13].x ,
+                points[13].y
             )}
 
             {renderSvgText(
