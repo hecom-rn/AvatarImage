@@ -1,5 +1,8 @@
 package cn.hecom.avatar;
 
+import android.graphics.Color;
+import android.util.Log;
+
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.annotations.ReactProp;
@@ -22,6 +25,11 @@ public class AvatarManager extends ReactViewManager {
     @ReactProp(name = "numberOfSides", defaultInt = 6)
     public void setNumberOfSides(AvatarGroup view, int numberOfSides) {
         view.setNoOfSides(numberOfSides);
+    }
+
+    @ReactProp(name = "backColor")
+    public void setBackColor(AvatarGroup view, int backColor) {
+        view.setBackColor(backColor);
     }
 
     @ReactProp(name = "radius", defaultFloat = 2f)

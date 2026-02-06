@@ -33,6 +33,7 @@ public class AvatarGroup extends ReactViewGroup {
     private Path borderPath = new Path();
     private Path clipPath = new Path();
     private final Paint clipPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private int backColor = 0xFFFFFFFF;
 
     private Path rectView = new Path();
     private Bitmap clipBitmap;
@@ -64,7 +65,7 @@ public class AvatarGroup extends ReactViewGroup {
 
         setWillNotDraw(false);
 
-        clipPaint.setColor(Color.BLUE);
+        clipPaint.setColor(backColor);
         clipPaint.setStyle(Paint.Style.FILL);
         clipPaint.setStrokeWidth(1);
 
@@ -72,8 +73,8 @@ public class AvatarGroup extends ReactViewGroup {
             clipPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
             setLayerType(LAYER_TYPE_SOFTWARE, clipPaint);
         } else {
-            clipPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
-            setLayerType(LAYER_TYPE_SOFTWARE, null);
+//            clipPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
+//            setLayerType(LAYER_TYPE_SOFTWARE, null);
         }
     }
 
@@ -255,5 +256,14 @@ public class AvatarGroup extends ReactViewGroup {
     private void updatePath() {
         this.needUpdatePath = true;
         postInvalidate();
+    }
+
+    public int getBackColor() {
+        return backColor;
+    }
+
+    public void setBackColor(int backColor) {
+        this.backColor = backColor;
+        clipPaint.setColor(this.backColor);
     }
 }
