@@ -27,11 +27,6 @@ public class AvatarManager extends ReactViewManager {
         view.setNoOfSides(numberOfSides);
     }
 
-    @ReactProp(name = "backColor")
-    public void setBackColor(AvatarGroup view, int backColor) {
-        view.setBackColor(backColor);
-    }
-
     @ReactProp(name = "radius", defaultFloat = 2f)
     public void setRadius(AvatarGroup view, float raduis) {
         view.setRadius(raduis);
