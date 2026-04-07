@@ -7,6 +7,7 @@
 
 #import "HexagonsView.h"
 #import <React/RCTConvert.h>
+#import <React/UIView+React.h>
 
 @interface HexagonsView ()
 @property (nonatomic, strong) NSMutableArray *layerArrM;
@@ -79,6 +80,7 @@
 - (void)setSize:(NSInteger)size {
     _size = size;
     self.borderView.frame = CGRectMake(0, 0, size, size);
+    [self setNeedsLayout];
 }
 
 - (void)setSepWidth:(NSInteger)sepWidth {
@@ -94,6 +96,25 @@
     _userLength = users.count;
 }
 
+- (void)insertReactSubview:(UIView *)subview atIndex:(NSInteger)atIndex {
+    [super insertReactSubview:subview atIndex:atIndex];
+    [self.borderView insertSubview:subview atIndex:atIndex];
+}
+
+- (void)removeReactSubview:(UIView *)subview {
+    [super removeReactSubview:subview];
+}
+
+- (void)didUpdateReactSubviews {
+    for (NSUInteger index = 0; index < self.reactSubviews.count; index++) {
+        UIView *subview = self.reactSubviews[index];
+        [self.borderView insertSubview:subview atIndex:index];
+    }
+    if (_size > 0) {
+        [self displayLayer:self.layer];
+    }
+}
+
 - (void)addSubview:(UIView *)view {
     if (view == self.borderView) {
         [super addSubview:view];
@@ -103,8 +124,18 @@
 }
 
 - (void)layoutSubviews {
+    [super layoutSubviews];
+    if (_size > 0) {
+        [self displayLayer:self.layer];
+    }
+    for (UIView *view in self.borderView.subviews) {
+        view.layer.mask = nil;
+        for (UIView *sub in view.subviews) {
+            sub.layer.mask = nil;
+        }
+    }
     // clip when subViews count equal to 3
-    if (_userLength == 3) {
+    if (_userLength == 3 && _size > 0) {
         for (UIView *view in self.borderView.subviews) {
             if ((CGRectGetMaxY(view.frame) - CGRectGetHeight(view.frame) / 2) > _size / 2) {
                 float sideLength = _size/2;
@@ -133,9 +164,11 @@
 #pragma mark - delegate
 - (void)displayLayer:(CALayer *)layer {
     // clip content
+    self.borderView.layer.mask = nil;
     for (CAShapeLayer *layer in self.layerArrM) {
         [layer removeFromSuperlayer];
     }
+    [self.layerArrM removeAllObjects];
     CGFloat size = _borderEnable ? _size - _borderWidth - 2 * _borderSpace - _innerBorderWidth : _size;
     CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
     maskLayer.path = [self drawPathWith:size];
@@ -153,6 +186,7 @@
         innerBorderLayer.lineWidth = _innerBorderWidth * 2;
         innerBorderLayer.fillColor = nil;
         innerBorderLayer.strokeColor = _innerBorderColor.CGColor;
+        [self.layerArrM addObject:innerBorderLayer];
         [layer addSublayer:innerBorderLayer];
         
         CAShapeLayer *borderLayer = [[CAShapeLayer alloc] init];
@@ -161,6 +195,7 @@
         borderLayer.lineWidth = _borderWidth;
         borderLayer.fillColor = nil;
         borderLayer.strokeColor = _borderColor.CGColor;
+        [self.layerArrM addObject:borderLayer];
         [layer addSublayer:borderLayer];
     }
     
