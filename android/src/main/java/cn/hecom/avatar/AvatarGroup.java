@@ -64,17 +64,12 @@ public class AvatarGroup extends ReactViewGroup {
 
         setWillNotDraw(false);
 
-        clipPaint.setColor(Color.BLUE);
+        clipPaint.setColor(Color.WHITE);
         clipPaint.setStyle(Paint.Style.FILL);
         clipPaint.setStrokeWidth(1);
 
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.O_MR1) {
-            clipPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
-            setLayerType(LAYER_TYPE_SOFTWARE, clipPaint);
-        } else {
-            clipPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
-            setLayerType(LAYER_TYPE_SOFTWARE, null);
-        }
+        clipPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
+        setLayerType(LAYER_TYPE_SOFTWARE, clipPaint);
     }
 
     protected float dpToPx(float dp) {
@@ -132,20 +127,13 @@ public class AvatarGroup extends ReactViewGroup {
         }
 
         drawSep(canvas);
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.O_MR1) {
-            canvas.drawBitmap(clipBitmap, 0, 0, clipPaint);
-//            canvas.drawPath(clipPath, clipPaint);
-        } else {
-            canvas.drawPath(rectView, clipPaint);
-        }
+        canvas.drawBitmap(clipBitmap, 0, 0, clipPaint);
 
         if (useBorder && mBorder != null) {
             drawBorder(canvas);
         }
 
-        if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.O_MR1) {
-            setLayerType(LAYER_TYPE_HARDWARE, null);
-        }
+        setLayerType(LAYER_TYPE_HARDWARE, null);
     }
 
     private void calculatePath() {
@@ -157,21 +145,17 @@ public class AvatarGroup extends ReactViewGroup {
             PathUtil.calculatePath(borderPath, center, numberOfSides, getSize(false), radius, rotate);
         }
 
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O_MR1) {
-            rectView.op(clipPath, Path.Op.DIFFERENCE);
-        } else {
-            if (clipBitmap != null) {
-                clipBitmap.recycle();
-            }
-            clipBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-            final Canvas canvas = new Canvas(clipBitmap);
-            Paint p = new Paint();
-            p.setColor(Color.BLACK);
-            p.setAntiAlias(true);
-            p.setStyle(Paint.Style.FILL);
-            p.setStrokeWidth(1);
-            canvas.drawPath(clipPath, p);
+        if (clipBitmap != null) {
+            clipBitmap.recycle();
         }
+        clipBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        final Canvas canvas = new Canvas(clipBitmap);
+        Paint p = new Paint();
+        p.setColor(Color.BLACK);
+        p.setAntiAlias(true);
+        p.setStyle(Paint.Style.FILL);
+        p.setStrokeWidth(1);
+        canvas.drawPath(clipPath, p);
     }
 
     private float getSize(boolean useBorder) {

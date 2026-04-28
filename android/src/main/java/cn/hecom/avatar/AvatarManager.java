@@ -1,5 +1,8 @@
 package cn.hecom.avatar;
 
+import android.graphics.Color;
+import android.util.Log;
+
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.annotations.ReactProp;
