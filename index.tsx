@@ -1,5 +1,8 @@
 import React from 'react';
-import {Image, Platform, processColor, Text} from 'react-native';
+import {Image, Platform, processColor, Text, View} from 'react-native';
+import {
+    renderGroupIcon, renderSixCornerImage, renderSixCornerText
+} from './RenderUtil';
 import AvatarGroup from './AvatarGroup';
 
 export interface User {
@@ -251,19 +254,32 @@ export default class AvatarImage extends React.PureComponent<Props, State> {
     }
 
     render() {
-        const {size, style, renderAvatar = this.renderDefaultAvatar, defOuterBorderColors, border} = this.props;
+        const {size, style, borderEnable, getThumbUrl = this.getThumbUrl, renderAvatar = this.renderDefaultAvatar, defOuterBorderColors, border} = this.props;
         const {users, radius} = this.state;
         const isGroup = users.length > 1;
-        return (
-            <AvatarGroup
-                {...this.props}
-                key={users.map(user => user.name).join('')}
-                radius={radius}
-                border={AvatarImage.processBorder(size, defOuterBorderColors, border, users)}
-                style={[{width: size, height: size}, style]}
-            >
-                {users.map(renderAvatar.bind(this, isGroup))}
-            </AvatarGroup>
-        );
+        const {fontWeight, fontSize, lineHeight, ...others} = AvatarImage.getTextStyle(size, users.length, 0);
+
+        if (isGroup) {
+            return renderGroupIcon(users, size, fontSize, 4, borderEnable, size / 8);
+        } else if (users?.[0].avatar) {
+            return renderSixCornerImage(getThumbUrl(users[0].avatar), size, 4, borderEnable, size / 8);
+        } else if (users?.[0]) {
+            return renderSixCornerText(users[0], size, fontSize, 4, borderEnable, size / 8);
+
+        } else {
+            return <View />;
+        }
+
+        // return (
+        //     <AvatarGroup
+        //         {...this.props}
+        //         key={users.map(user => user.name).join('')}
+        //         radius={radius}
+        //         border={AvatarImage.processBorder(size, defOuterBorderColors, border, users)}
+        //         style={[{width: size, height: size}, style]}
+        //     >
+        //         {users.map(renderAvatar.bind(this, isGroup))}
+        //     </AvatarGroup>
+        // );
     }
 }
